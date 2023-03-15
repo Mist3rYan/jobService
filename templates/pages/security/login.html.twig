@@ -6,17 +6,16 @@
 {% block body %}
 	<div class="container">
 		<h1 class="mt-4">Connexion</h1>
-
-		{% for message in app.flashes('success')%}
-			<div class="alert alert-success mt-4">
+		{% for message in app.flashes('danger') %}
+			<div class="alert alert-danger mt-4" role="alert">
 				{{ message }}
 			</div>
 		{% endfor %}
-
-		{% if error %}
-			<div class="alert alert-danger mt-4">{{ error.messageKey|trans(error.messageData,'security')}}
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success mt-4" role="alert">
+				{{ message }}
 			</div>
-		{% endif %}
+		{% endfor %}
 		<form action="{{ path('security.login')}}" method="post">
 			<div class="form-group">
 				<label for="username" class="form-label mt-4">Adresse email</label>

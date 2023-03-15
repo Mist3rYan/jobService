@@ -72,6 +72,7 @@ class UserType extends AbstractType
             ],
         ])
         ->add('cv', FileType::class,[
+            'data_class' => null,
             'required'=> false,
             'attr' => [
                 'class' => 'form-control',
@@ -85,6 +86,7 @@ class UserType extends AbstractType
             'attr' => [
                 'class' => 'btn btn-primary mt-4'
             ],
+            'label' => 'Modifier'
         ])
     ;
     }

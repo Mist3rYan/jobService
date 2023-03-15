@@ -1,16 +1,36 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Accueil
+{% endblock %}
 
 {% block body %}
 	<div class="container">
 		<h1 class="mt-4">Accueil</h1>
-
-		{% for message in app.flashes('success')%}
-			<div class="alert alert-success mt-4">
+		{% for message in app.flashes('danger') %}
+			<div class="alert alert-danger mt-4" role="alert">
 				{{ message }}
 			</div>
 		{% endfor %}
-    </di>
-{% endblock %}
-
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success mt-4" role="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+	</div>
+	<div class="container">
+		<h2 class="mt-5">Qui sommes nous</h2>
+		<p>
+			<strong>Job Service</strong>est une organisation qui agit en tant qu'intermédiaire entre les candidats à l'emploi et les recruteurs potentiels. Le service d'emploi fournit une plate-forme en ligne pour que les candidats puissent créer un profil, télécharger leur CV et postuler à des emplois correspondant à leurs compétences et à leurs intérêts.
+											
+											Le processus commence généralement par une validation du profil du candidat par un consultant en recrutement. Une fois que le profil est validé, le candidat peut commencer à postuler à des offres d'emploi proposées par les recruteurs partenaires du service d'emploi.
+		</p>
+		<p></p>
+		En résumé,
+		<strong>Job Service</strong>
+		met en relation les candidats et les recruteurs en utilisant une plateforme en ligne pour faciliter le processus de recrutement. La validation du profil par un consultant en recrutement aide à assurer la qualité des candidats proposés aux recruteurs.</p>
+</div>
+<div class="container mt-4 text-center">
+	<a href="/inscription">
+		<button type="button" class="btn btn-primary">Inscrivez-vous</button>
+	</a>
+</div></div>{% endblock %}

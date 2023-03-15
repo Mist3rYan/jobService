@@ -1,10 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon profil{% endblock %}
+{% block title %}Mon profil
+{% endblock %}
 
 {% block body %}
-<div class="container">
-<h1 class="mt-4">Mon profil</h1>
-{{ form(form) }}
-</div>
+	<div class="container">
+		<h1 class="mt-4">Mon profil</h1>
+		{% for message in app.flashes('danger') %}
+			<div class="alert alert-danger mt-4" role="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success mt-4" role="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+		{% if is_granted('ROLE_CANDIDAT')%}
+			{{ form_start(form) }}
+			{{ form_errors(form) }}
+			{{ form_row(form.name) }}
+			{{ form_row(form.firstName) }}
+			{{ form_widget(form.address, {"attr": {"class": "d-none"}})}}
+			{{ form_row(form.cv) }}
+			{{ form_row(form.submit) }}
+			{{ form_end(form) }}
+		{% elseif is_granted('ROLE_RECRUTEUR') %}
+			{{ form_start(form) }}
+			{{ form_errors(form) }}
+			{{ form_row(form.name) }}
+			{{ form_widget(form.firstName, {"attr": {"class": "d-none"}}) }}
+			{{ form_row(form.address)}}
+			{{ form_widget(form.cv, {"attr": {"class": "d-none"}}) }}
+			{{ form_row(form.submit) }}
+			{{ form_end(form) }}
+		{% endif %}
+	</div>
 {% endblock %}
