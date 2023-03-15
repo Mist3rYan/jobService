@@ -3,6 +3,14 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
-Bonjour
+	<div class="container">
+		<h1 class="mt-4">Accueil</h1>
+
+		{% for message in app.flashes('success')%}
+			<div class="alert alert-success mt-4">
+				{{ message }}
+			</div>
+		{% endfor %}
+    </di>
 {% endblock %}
 
