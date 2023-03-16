@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Annonce;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -18,6 +19,15 @@ class AppFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
+        //Annonce
+        for ($i = 0; $i < 25; $i++) {
+            $annonce = new Annonce();
+            $annonce->setPoste($this->faker->jobTitle())
+                ->setLieuDeTravail($this->faker->address())
+                ->setDescription($this->faker->realText(200))
+                ->setIdRecruteurCreate($this->faker->numberBetween(1, 6));
+            $manager->persist($annonce);
+        }
         //Candidat
         for ($i = 0; $i < 25; $i++) {
             $candidat = new User();
