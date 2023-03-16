@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Offre
+	{{ annonce.id }}
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		{% if annonce|length > 0 %}
+			<h1>Détails offre n°:
+				{{ annonce.id }}</h1>
+			{% for message in app.flashes('danger')%}
+				<div class="alert alert-danger mt-4">
+					{{ message }}
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('success')%}
+				<div class="alert alert-success mt-4">
+					{{ message }}
+				</div>
+			{% endfor %}
+			<p class="text-center">Numéro</p>
+			<p class="text-center">{{ annonce.id }}</p>
+			<p class="text-center">Poste</p>
+			<p class="text-center">{{ annonce.poste }}</p>
+			<p class="text-center">Lieu</p>
+			<p class="text-center">{{ annonce.lieudetravail }}</p>
+			<p class="text-center">Description</p>
+			<p class="text-center">{{ annonce.description }}</p>
+			<p class="text-center">Date</p>
+			<p class="text-center">{{ annonce.createAt|date('d/m/Y')}}</p>
+		{% else %}
+			<div class="alert alert-dismissible alert-danger">
+				<strong>Aucune offre trouvée</strong>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}

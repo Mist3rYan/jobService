@@ -31,6 +31,7 @@
 						<th scope="col" class="text-center">Lieu</th>
 						<th scope="col" class="text-center">Description</th>
 						<th scope="col" class="text-center">Date</th>
+						<th scope="col" class="text-center">Détails</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -41,6 +42,9 @@
 							<td class="text-center">{{ annonce.lieudetravail }}</td>
 							<td class="text-center">{{ annonce.description }}</td>
 							<td class="text-center">{{ annonce.createAt|date('d/m/Y')}}</td>
+							<td class="text-center">
+								<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success">Voir</a>
+							</td>
 						</tr>
 					{% endfor %}
 				</tbody>

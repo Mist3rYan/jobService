@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Annonce;
 use App\Repository\AnnonceRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,6 +22,13 @@ class AnnonceController extends AbstractController
         );
         return $this->render('pages/annonce/index.html.twig', [
             'annonces' => $annonces,
+        ]);
+    }
+    #[Route('/annonce/offre/{id}', name: 'annonce.detail', methods: ['GET', 'POST'])]
+    public function detail(Annonce $annonce): Response
+    {
+        return $this->render('pages/annonce/detail.html.twig', [
+            'annonce' => $annonce,
         ]);
     }
 }
