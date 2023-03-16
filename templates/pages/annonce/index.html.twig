@@ -43,7 +43,11 @@
 							<td class="text-center">{{ annonce.description }}</td>
 							<td class="text-center">{{ annonce.createAt|date('d/m/Y')}}</td>
 							<td class="text-center">
-								<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success">Voir</a>
+								{% if app.user %}
+									<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success">Voir</a>
+								{% else %}
+									<a href="/inscription" class="btn btn-success">Inscrivez-vous</a>
+								{% endif %}
 							</td>
 						</tr>
 					{% endfor %}
