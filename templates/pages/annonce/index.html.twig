@@ -31,7 +31,9 @@
 						<th scope="col" class="text-center">Lieu</th>
 						<th scope="col" class="text-center">Description</th>
 						<th scope="col" class="text-center">Date</th>
-						<th scope="col" class="text-center">Détails</th>
+						{% if is_granted('ROLE_CANDIDAT') %}
+							<th scope="col" class="text-center">Détails</th>
+						{% endif %}
 					</tr>
 				</thead>
 				<tbody>
@@ -43,10 +45,8 @@
 							<td class="text-center">{{ annonce.description }}</td>
 							<td class="text-center">{{ annonce.createAt|date('d/m/Y')}}</td>
 							<td class="text-center">
-								{% if app.user %}
+								{% if is_granted('ROLE_CANDIDAT') %}
 									<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success">Voir</a>
-								{% else %}
-									<a href="/inscription" class="btn btn-success">Inscrivez-vous</a>
 								{% endif %}
 							</td>
 						</tr>

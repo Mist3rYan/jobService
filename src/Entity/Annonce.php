@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\User;
 use App\Repository\AnnonceRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -31,14 +32,16 @@ class Annonce
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $id_candidat_invalid = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $id_recruteur_create = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $id_validaton_consultant = null;
 
     #[ORM\Column]
     private ?bool $isValid = null;
+
+    #[ORM\ManyToOne(inversedBy: 'recruteur')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $recruteur = null;
 
     public function __construct()
     {
@@ -123,18 +126,6 @@ class Annonce
         return $this;
     }
 
-    public function getIdRecruteurCreate(): ?string
-    {
-        return $this->id_recruteur_create;
-    }
-
-    public function setIdRecruteurCreate(string $id_recruteur_create): self
-    {
-        $this->id_recruteur_create = $id_recruteur_create;
-
-        return $this;
-    }
-
     public function getIdValidatonConsultant(): ?string
     {
         return $this->id_validaton_consultant;
@@ -163,6 +154,18 @@ class Annonce
     public function setIsValid($isValid)
     {
         $this->isValid = $isValid;
+
+        return $this;
+    }
+
+    public function getRecruteur(): ?User
+    {
+        return $this->recruteur;
+    }
+
+    public function setRecruteur(?User $recruteur): self
+    {
+        $this->recruteur = $recruteur;
 
         return $this;
     }

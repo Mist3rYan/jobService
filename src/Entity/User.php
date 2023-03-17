@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -58,10 +60,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?int $idConsultantValidate = null;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Annonce::class, orphanRemoval: true)]
+    private Collection $recruteur;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->isValid = false;
+        $this->recruteur = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -234,6 +240,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIdConsultantValidate(?int $idConsultantValidate): self
     {
         $this->idConsultantValidate = $idConsultantValidate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Annonce>
+     */
+    public function getIdRecruteurCreate(): Collection
+    {
+        return $this->recruteur;
+    }
+
+    public function addRecruteur(Annonce $recruteur): self
+    {
+        if (!$this->recruteur->contains($recruteur)) {
+            $this->recruteur->add($recruteur);
+            $recruteur->setRecruteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIdRecruteurCreate(Annonce $recruteur): self
+    {
+        if ($this->recruteur->removeElement($recruteur)) {
+            // set the owning side to null (unless already changed)
+            if ($recruteur->getRecruteur() === $this) {
+                $recruteur->setRecruteur(null);
+            }
+        }
 
         return $this;
     }

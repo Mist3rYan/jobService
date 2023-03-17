@@ -19,14 +19,15 @@ class AppFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
-        //Annonce
-        for ($i = 0; $i < 25; $i++) {
-            $annonce = new Annonce();
-            $annonce->setPoste($this->faker->jobTitle())
-                ->setLieuDeTravail($this->faker->address())
-                ->setDescription($this->faker->realText(200))
-                ->setIdRecruteurCreate($this->faker->numberBetween(1, 6));
-            $manager->persist($annonce);
+        $recruteurs = [];
+        //Recruteur 
+        for ($i = 0; $i < 6; $i++) {
+            $recruteur = new User();
+            $recruteur->setEmail($this->faker->email())
+                ->setRoles(['ROLE_RECRUTEUR'])
+                ->setPlainPassword('password');
+            $recruteurs[] = $recruteur;
+            $manager->persist($recruteur);
         }
         //Candidat
         for ($i = 0; $i < 25; $i++) {
@@ -37,15 +38,6 @@ class AppFixtures extends Fixture
 
             $manager->persist($candidat);
         }
-        //Recruteur 
-        for ($i = 0; $i < 6; $i++) {
-            $recruteur = new User();
-            $recruteur->setEmail($this->faker->email())
-                ->setRoles(['ROLE_RECRUTEUR'])
-                ->setPlainPassword('password');
-
-            $manager->persist($recruteur);
-        }
         //Consultant 
         for ($i = 0; $i < 2; $i++) {
             $consultant = new User();
@@ -54,6 +46,15 @@ class AppFixtures extends Fixture
                 ->setPlainPassword('password');
 
             $manager->persist($consultant);
+        }
+        //Annonce
+        for ($i = 0; $i < 25; $i++) {
+            $annonce = new Annonce();
+            $annonce->setPoste($this->faker->jobTitle())
+                ->setLieuDeTravail($this->faker->address())
+                ->setDescription($this->faker->realText(200))
+                ->setRecruteur($recruteurs[mt_rand(0, count($recruteurs) - 1)]);
+            $manager->persist($annonce);
         }
         $admin = new User();
         $admin->setEmail('admin@admin.fr')
