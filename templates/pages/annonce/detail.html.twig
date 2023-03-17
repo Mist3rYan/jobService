@@ -6,34 +6,75 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container mt-4">
-		{% if annonce|length > 0 %}
-			<h1>Détails offre n°:
-				{{ annonce.id }}</h1>
-			{% for message in app.flashes('danger')%}
-				<div class="alert alert-danger mt-4">
-					{{ message }}
+	{% if app.user %}
+		<div class="container mt-4">
+			{% if annonce|length > 0 %}
+				<h1>Référence de l'annonce :
+					{{ annonce.id }}</h1>
+				{% for message in app.flashes('danger')%}
+					<div class="alert alert-danger mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				{% for message in app.flashes('success')%}
+					<div class="alert alert-success mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				<table class="table table-striped ">
+					<tbody>
+						<tr class="table-primary">
+							<td class="text-left col-md-2">
+								POSTE
+							</td>
+							<td class="text-left">{{ annonce.poste }}</td>
+						</tr>
+						<tr class="table-primary">
+							<td class="text-left">
+								ADRESSE
+							</td>
+							<td class="text-left">{{ annonce.lieudetravail }}</td>
+						</tr>
+						<tr class="table-primary">
+							<td class="text-left">
+								DESCRIPTION
+							</td>
+							<td class="text-left">{{ annonce.description }}</td>
+						</tr>
+						<tr class="table-primary">
+							<td class="text-left">
+								DATE DE PUBLICATION
+							</td>
+							<td class="text-left">{{ annonce.createAt|date('d/m/Y')}}</td>
+						</tr>
+					</tbody>
+				</table>
+			{% else %}
+				<div class="alert alert-dismissible alert-danger">
+					<strong>Aucune offre trouvée</strong>
 				</div>
-			{% endfor %}
-			{% for message in app.flashes('success')%}
-				<div class="alert alert-success mt-4">
-					{{ message }}
-				</div>
-			{% endfor %}
-			<p class="text-center">Numéro</p>
-			<p class="text-center">{{ annonce.id }}</p>
-			<p class="text-center">Poste</p>
-			<p class="text-center">{{ annonce.poste }}</p>
-			<p class="text-center">Lieu</p>
-			<p class="text-center">{{ annonce.lieudetravail }}</p>
-			<p class="text-center">Description</p>
-			<p class="text-center">{{ annonce.description }}</p>
-			<p class="text-center">Date</p>
-			<p class="text-center">{{ annonce.createAt|date('d/m/Y')}}</p>
-		{% else %}
-			<div class="alert alert-dismissible alert-danger">
-				<strong>Aucune offre trouvée</strong>
-			</div>
-		{% endif %}
-	</div>
+			{% endif %}
+		</div>
+		<div class="container text-center">
+			{% if app.user.roles[0] == 'ROLE_RECRUTEUR' %}
+				<a href="/annonce/mesannonces" class="btn btn-secondary">Retour</a>
+				<a href="#" class="btn btn-warning">Modifier</a>
+				<a href="#" class="btn btn-danger">Supprimer</a>
+			{% endif %}
+			{% if app.user.roles[0] == 'ROLE_CANDIDAT' %}
+				<a href="/annonce" class="btn btn-secondary">Retour</a>
+				<a href="#" class="btn btn-success">Postuler</a>
+			{% endif %}
+			{% if app.user.roles[0] == 'ROLE_CONSULTANT' %}
+				<a href="{{path('consultant.annonce')}}" class="btn btn-secondary">Retour</a>
+				{% if annonce.getIsValid == 0 %}
+				<a href="{{path('annonce.valid',{'id': annonce.id})}}" class="btn btn-success">Valider</a>
+				{% endif %}
+			{% endif %}
+		</div>
+	{% else  %}
+		<div class="container">
+			{% include 'security/login.html.twig' %}
+		</div>
+	{% endif %}
 {% endblock %}

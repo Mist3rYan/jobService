@@ -83,7 +83,7 @@ class RegistrationType extends AbstractType
             ->add('submit', SubmitType::class, [
                 'label' => 'S\'inscrire',
                 'attr' => [
-                    'class' => 'btn btn-primary mt-4'
+                    'class' => 'btn btn-lg btn-warning mt-4'
                 ],
             ]);
         // Data transformer pour le champ roles

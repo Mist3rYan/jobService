@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Panneau de controle
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<h1 class="text-center">PANNEAU DE CONTROLE</h1>
+		{% for message in app.flashes('danger')%}
+			<div class="alert alert-danger mt-4">
+				{{ message }}
+			</div>
+		{% endfor %}
+		{% for message in app.flashes('success')%}
+			<div class="alert alert-success mt-4">
+				{{ message }}
+			</div>
+		{% endfor %}
+		<div class="d-flex justify-content-around mt-4">
+			<a href="#" class="btn btn-success btn-lg">Candidats</a>
+			<a href="#" class="btn btn-success btn-lg">Recruteurs</a>
+			<a href="{{ path('consultant.annonce') }}" class="btn btn-success btn-lg">Annonces</a>
+			<a href="#" class="btn btn-success btn-lg">Candidatures</a>
+		</div>
+	</div>
+{% endblock %}

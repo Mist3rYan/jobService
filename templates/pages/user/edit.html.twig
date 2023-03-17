@@ -16,24 +16,27 @@
 				{{ message }}
 			</div>
 		{% endfor %}
-		{% if is_granted('ROLE_CANDIDAT')%}
+		
 			{{ form_start(form) }}
 			{{ form_errors(form) }}
 			{{ form_row(form.name) }}
-			{{ form_row(form.firstName) }}
-			{{ form_widget(form.address, {"attr": {"class": "d-none"}})}}
-			{{ form_row(form.cv) }}
+			{% if is_granted('ROLE_RECRUTEUR')%}
+				{{ form_widget(form.firstName, {"attr": {"class": "d-none"}}) }}
+				{{ form_widget(form.cv, {"attr": {"class": "d-none"}}) }}
+				{{ form_row(form.address)}}
+			{% endif %}
+			{% if is_granted('ROLE_CANDIDAT') %}
+				{{ form_row(form.firstName)}}
+				{{ form_row(form.cv)}}
+				{{ form_widget(form.address, {"attr": {"class": "d-none"}})}}
+			{% endif %}
+			{% if is_granted('ROLE_CONSULTANT') %}
+				{{ form_widget(form.firstName, {"attr": {"class": "d-none"}}) }}
+				{{ form_widget(form.cv, {"attr": {"class": "d-none"}}) }}
+				{{ form_widget(form.address, {"attr": {"class": "d-none"}})}}
+			{% endif %}
+			{{ form_row(form.plainPassword) }}
 			{{ form_row(form.submit) }}
 			{{ form_end(form) }}
-		{% elseif is_granted('ROLE_RECRUTEUR') %}
-			{{ form_start(form) }}
-			{{ form_errors(form) }}
-			{{ form_row(form.name) }}
-			{{ form_widget(form.firstName, {"attr": {"class": "d-none"}}) }}
-			{{ form_row(form.address)}}
-			{{ form_widget(form.cv, {"attr": {"class": "d-none"}}) }}
-			{{ form_row(form.submit) }}
-			{{ form_end(form) }}
-		{% endif %}
 	</div>
 {% endblock %}
