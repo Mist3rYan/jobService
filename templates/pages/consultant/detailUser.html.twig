@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Utilisateur à valider
+{% endblock %}
+
+{% block body %}
+	{% if app.user %}
+		<div class="container mt-4">
+			{% if user|length > 0 %}
+				<h1>Référence de l'utilisateur à valider :
+					{{ user.id }}</h1>
+				{% for message in app.flashes('danger')%}
+					<div class="alert alert-danger mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				{% for message in app.flashes('success')%}
+					<div class="alert alert-success mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				<table class="table table-striped ">
+					<tbody>
+						<tr class="table-primary">
+							<td class="text-left col-md-2">
+								STATUT
+							</td>
+							{% if user.roles[0] == 'ROLE_RECRUTEUR' %}
+								<td class="text-center">RECRUTEUR</td>
+							{% else %}
+								<td class="text-center">CANDIDAT</td>
+							{% endif %}
+						</tr>
+						<tr class="table-primary">
+							<td class="text-left col-md-2">
+								EMAIL
+							</td>
+							<td class="text-left">{{ user.email }}</td>
+						</tr>
+						<tr class="table-primary">
+							<td class="text-left">
+								NOM
+							</td>
+							<td class="text-left">{{ user.name }}</td>
+						</tr>
+						{% if user.roles[0] == 'ROLE_CANDIDAT' %}
+							<tr class="table-primary">
+								<td class="text-left">
+									PRENOM
+								</td>
+								<td class="text-left">{{ user.firstname }}</td>
+							</tr>
+
+							<tr class="table-primary">
+								<td class="text-left">
+									MON CV
+								</td>
+								<td class="text-left"><a href="{{ '/uploads/' ~ user.cv }}">Télécharger</a></td>
+							</tr>
+						{% endif %}
+						{% if user.roles[0] == 'ROLE_RECRUTEUR' %}
+							<tr class="table-primary">
+								<td class="text-left">
+									ADRESSE
+								</td>
+								<td class="text-left">{{ user.address }}</td>
+							</tr>
+						{% endif %}
+						<tr class="table-primary">
+							<td class="text-left">
+								DATE DE CREATION
+							</td>
+							<td class="text-left">{{ user.createdAt|date('d/m/Y')}}</td>
+						</tr>
+					</tbody>
+				</table>
+			{% else %}
+				<div class="alert alert-dismissible alert-danger">
+					<strong>Aucune offre trouvée</strong>
+				</div>
+			{% endif %}
+		</div>
+		<div class="container text-center">
+			{% if app.user.roles[0] == 'ROLE_CONSULTANT' %}
+				<a href="{{path('consultant.listeUser')}}" class="btn btn-secondary">Retour</a>
+				{% if user.IsValid == 0 %}
+					<a href="{{path('consultant.validUser',{'id': user.id})}}"class="btn btn-success">Valider</a>
+				{% endif %}
+			{% endif %}
+		</div>
+	{% else  %}
+		<div class="container">
+			{% include 'security/login.html.twig' %}
+		</div>
+	{% endif %}
+{% endblock %}

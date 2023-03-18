@@ -16,7 +16,7 @@
 				{{ message }}
 			</div>
 		{% endfor %}
-		
+				<a href="{{ path('user.index') }}" class="btn btn-secondary w-100 mt-4">Retour</a>
 			{{ form_start(form) }}
 			{{ form_errors(form) }}
 			{{ form_row(form.name) }}

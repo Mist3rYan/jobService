@@ -1,21 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription
+{% block title %}Créer une annonce
 {% endblock %}
 
 {% block body %}
 	<div class="container">
-		<h1 class="mt-4">Inscription</h1>
-		{% for message in app.flashes('danger') %}
-			<div class="alert alert-danger mt-4" role="alert">
-				{{ message }}
-			</div>
-		{% endfor %}
-		{% for message in app.flashes('success') %}
-			<div class="alert alert-success mt-4" role="alert">
-				{{ message }}
-			</div>
-		{% endfor %}
-		{{ form(form) }}
+		<h1 class="mt-4">Créer une annonce</h1>
+		{% if app.user.isValid == 1 %}
+			{% for message in app.flashes('danger') %}
+				<div class="alert alert-danger mt-4" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success mt-4" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			{{ form(form) }}
+				{% else %}
+					<div class="alert alert-dismissible alert-danger">
+						<strong>Votre compte est en attente de validation</strong>
+					</div>
+			{% endif %}
 		</div>
 	{% endblock %}

@@ -7,8 +7,8 @@
 
 {% block body %}
 	{% if app.user %}
-		<div class="container mt-4">
-			{% if annonce|length > 0 %}
+		{% if annonce|length > 0 %}
+			<div class="container mt-4">
 				<h1>Référence de l'annonce :
 					{{ annonce.id }}</h1>
 				{% for message in app.flashes('danger')%}
@@ -49,23 +49,18 @@
 						</tr>
 					</tbody>
 				</table>
-			{% else %}
-				<div class="alert alert-dismissible alert-danger">
-					<strong>Aucune offre trouvée</strong>
-				</div>
-			{% endif %}
-		</div>
-		<div class="container text-center">
-			{% if app.user.roles[0] == 'ROLE_RECRUTEUR' %}
-				<a href="/annonce/mesannonces" class="btn btn-secondary">Retour</a>
-				<a href="{{path('annonce.edit',{'id': annonce.id})}}" class="btn btn-warning">Modifier</a>
-				<a href="{{path('annonce.delete',{'id': annonce.id})}}" class="btn btn-danger">Supprimer</a>
-			{% endif %}
-			{% if app.user.roles[0] == 'ROLE_CANDIDAT' %}
-				<a href="/annonce" class="btn btn-secondary">Retour</a>
-				<a href="#" class="btn btn-success">Postuler</a>
-			{% endif %}
-		</div>
+			</div>
+			<div class="container text-center">
+				<a href="{{path('consultant.listeAd')}}" class="btn btn-secondary">Retour</a>
+				{% if annonce.getIsValid == 0 %}
+					<a href="{{path('consultant.validAd',{'id': annonce.id})}}" class="btn btn-success">Valider</a>
+				{% endif %}
+			</div>
+		{% else %}
+			<div class="alert alert-dismissible alert-danger">
+				<strong>Aucune offre trouvée</strong>
+			</div>
+		{% endif %}
 	{% else  %}
 		<div class="container">
 			{% include 'security/login.html.twig' %}

@@ -1,13 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	Mes offres
+	Mes annonces
 {% endblock %}
 
 {% block body %}
 	<div class="container mt-4">
-		{% if annonces|length > 0 %}
-			<h1>Mes offres d'emploi</h1>
+		<h1>Mes annonces</h1>
+		{% if app.user.isValid == 1 %}
+			<div class="d-grid gap-2">
+				<a href="{{ path('annonce.create') }}" class="btn btn-lg btn-warning">Créer une offre</a>
+			</div>
+
 			{% for message in app.flashes('danger')%}
 				<div class="alert alert-danger mt-4">
 					{{ message }}
@@ -18,49 +22,86 @@
 					{{ message }}
 				</div>
 			{% endfor %}
-			{# total items count #}
-			<div class="alert alert-dismissible alert-primary mt-4">
-				<strong>Nombre d'offres créées :
-					{{ annonces.getTotalItemCount }}</strong>
-			</div>
-			{# create annonce #}
-			<div class="d-grid gap-2">
-				<a href="{{ path('annonce.create') }}" class="btn btn-lg btn-warning">Créer une offre</a>
-			</div>
-			<table class="table table-hover mt-4">
-				<thead>
-					<tr>
-						{# <th scope="col" class="text-center">Numéro</th> #}
-						<th scope="col" class="text-center">Poste</th>
-						<th scope="col" class="text-center">Lieu</th>
-						<th scope="col" class="text-center">Description</th>
-						<th scope="col" class="text-center">Date</th>
-						<th scope="col" class="text-center">Détails</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for annonce in annonces %}
-						<tr
-							class="table-primary">
-							{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
-							<td class="text-center">{{ annonce.poste }}</td>
-							<td class="text-center">{{ annonce.lieudetravail }}</td>
-							<td class="text-center">{{ annonce.description }}</td>
-							<td class="text-center">{{ annonce.createAt|date('d/m/Y')}}</td>
-							<td class="text-center">
-								<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success">Voir</a>
-							</td>
+			{% if annonces|length > 0 %}
+				{# total items count #}
+				<div class="alert alert-dismissible alert-primary mt-4">
+					<strong>Nombre d'offres créées :
+						{{ annonces.getTotalItemCount }}</strong>
+				</div>
+
+				<h3 class="mt-4">Offres en attente</h3>
+				<table class="table table-hover mt-4">
+					<thead>
+						<tr>
+							{# <th scope="col" class="text-center">Numéro</th> #}
+							<th scope="col" class="text-center">Poste</th>
+							<th scope="col" class="text-center">Lieu</th>
+							<th scope="col" class="text-center">Description</th>
+							<th scope="col" class="text-center">Date</th>
+							<th scope="col" class="text-center">Détails</th>
 						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-			{# display navigation #}
-			<div class="navigation d-flex justify-content-center">
-				{{ knp_pagination_render(annonces) }}
-			</div>
+					</thead>
+					<tbody>
+						{% for annonce in annonces %}
+							{% if annonce.isValid == 0 %}
+								<tr
+									class="table-primary">
+									{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
+									<td class="text-center">{{ annonce.poste }}</td>
+									<td class="text-center">{{ annonce.lieudetravail }}</td>
+									<td class="text-center">{{ annonce.description }}</td>
+									<td class="text-center">{{ annonce.createAt|date('d/m/Y')}}</td>
+									<td class="text-center">
+										<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success">Voir</a>
+									</td>
+								</tr>
+							{% endif %}
+						{% endfor %}
+					</tbody>
+				</table>
+				<h3 class="mt-4">Offres validées</h3>
+				{# display navigation #}
+				<table class="table table-hover mt-4">
+					<thead>
+						<tr>
+							{# <th scope="col" class="text-center">Numéro</th> #}
+							<th scope="col" class="text-center">Poste</th>
+							<th scope="col" class="text-center">Lieu</th>
+							<th scope="col" class="text-center">Description</th>
+							<th scope="col" class="text-center">Date</th>
+							<th scope="col" class="text-center">Détails</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for annonce in annonces %}
+							{% if annonce.isValid == 1 %}
+								<tr
+									class="table-primary">
+									{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
+									<td class="text-center">{{ annonce.poste }}</td>
+									<td class="text-center">{{ annonce.lieudetravail }}</td>
+									<td class="text-center">{{ annonce.description }}</td>
+									<td class="text-center">{{ annonce.createAt|date('d/m/Y')}}</td>
+									<td class="text-center">
+										<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success">Voir</a>
+									</td>
+								</tr>
+							{% endif %}
+						{% endfor %}
+					</tbody>
+				</table>
+				{# display navigation #}
+				<div class="navigation d-flex justify-content-center">
+					{{ knp_pagination_render(annonces) }}
+				</div>
+			{% else %}
+				<div class="alert alert-dismissible alert-danger mt-4">
+					<strong>Aucune annonce trouvée</strong>
+				</div>
+			{% endif %}
 		{% else %}
-			<div class="alert alert-dismissible alert-danger">
-				<strong>Aucune offre trouvée</strong>
+			<div class="alert alert-dismissible alert-danger mt-4">
+				<strong>Votre compte est en attente de validation</strong>
 			</div>
 		{% endif %}
 	</div>
