@@ -55,7 +55,7 @@ class AnnonceController extends AbstractController
         ]);
     }
 
-    #[Route('/annonce', name: 'annonce.index', methods: ['GET'])]
+    #[Route('/annonces', name: 'annonce.index', methods: ['GET'])]
     public function index(AnnonceRepository $repositery, PaginatorInterface $paginator, Request $request): Response
     {
         $annonces = $paginator->paginate(

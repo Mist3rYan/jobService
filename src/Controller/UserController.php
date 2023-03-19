@@ -7,7 +7,7 @@ use App\Form\UserType;
 use App\Repository\AnnonceRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class UserController extends AbstractController
 {
@@ -30,11 +31,68 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[Route('/utilisateur/edition/{id}', name: 'user.edit', methods: ['GET', 'POST'])]
+    public function edit(User $user, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
+    {
+        if (!$this->getUser()) {
+            $this->addFlash('danger', 'Merci de vous connecter !');
+            return $this->redirectToRoute('security.login');
+        }
+        if ($this->getUser() !== $user) {
+            $this->addFlash('danger', 'Ce compte ne vous appartient pas !');
+            return $this->redirectToRoute('app_home');
+        }
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($hasher->isPasswordValid($user, $user->getPlainPassword())) {
+                $file = $form->get('cv')->getData();
+                if ($file) {
+                    $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+                    try {
+                        $file->move($this->getParameter('upload_destination'), $fileName);
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+                    $user->setCv($fileName);
+                }
+
+                $manager->persist($user);
+                $manager->flush();
+
+                $this->addFlash('success', 'Votre compte a bien été modifié !');
+                return $this->redirectToRoute('user.index');
+            } else {
+                $this->addFlash('danger', 'Votre mot de passe est incorrect !');
+            }
+        }
+        return $this->render('pages/user/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/utilisateur/suppression/{id}', name: 'user.delete', methods: ['GET', 'POST'])]
+    public function deleteUser(User $user, ManagerRegistry $doctrine): Response
+    {
+        if (!$this->getUser()) {
+            $this->addFlash('danger', 'Impossible de supprimer ce compte !');
+            return $this->redirectToRoute('app_home');
+        }
+        $this->container->get('security.token_storage')->setToken(null);
+        $entityManager = $doctrine->getManager();
+        $entityManager->remove($user);
+        $entityManager->flush();
+        $this->addFlash('danger', 'Votre compte à bien été supprimé !');
+        return $this->redirectToRoute('app_home');
+    }
+
     #[IsGranted('ROLE_CONSULTANT')]
-    #[Route('/consultant/uservalider/{id}', name: 'consultant.validUser', methods: ['GET','POST'])]
+    #[Route('/consultant/uservalider/{id}', name: 'consultant.validUser', methods: ['GET', 'POST'])]
     public function validAd(User $user, EntityManagerInterface $manager): Response
     {
-        if($user->getIsValid() == 0){
+        if ($user->getIsValid() == 0) {
             $user->setIsValid(1);
             $manager->persist($user);
             $manager->flush();
@@ -88,48 +146,6 @@ class UserController extends AbstractController
     {
         return $this->render('pages/consultant/detailUser.html.twig', [
             'user' => $user,
-        ]);
-    }
-
-    #[Route('/utilisateur/edition/{id}', name: 'user.edit', methods: ['GET', 'POST'])]
-    public function edit(User $user, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
-    {
-        if (!$this->getUser()) {
-            $this->addFlash('danger', 'Merci de vous connecter !');
-            return $this->redirectToRoute('security.login');
-        }
-        if ($this->getUser() !== $user) {
-            $this->addFlash('danger', 'Ce compte ne vous appartient pas !');
-            return $this->redirectToRoute('app_home');
-        }
-        $form = $this->createForm(UserType::class, $user);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($hasher->isPasswordValid($user, $user->getPlainPassword())) {
-                $file = $form->get('cv')->getData();
-                if ($file) {
-                    $fileName = md5(uniqid()) . '.' . $file->guessExtension();
-                    try {
-                        $file->move($this->getParameter('upload_destination'), $fileName);
-                    } catch (FileException $e) {
-                        // ... handle exception if something happens during file upload
-                    }
-                    $user->setCv($fileName);
-                }
-
-                $manager->persist($user);
-                $manager->flush();
-
-                $this->addFlash('success', 'Votre compte a bien été modifié !');
-                return $this->redirectToRoute('user.index');
-            } else {
-                $this->addFlash('danger', 'Votre mot de passe est incorrect !');
-            }
-        }
-        return $this->render('pages/user/edit.html.twig', [
-            'form' => $form->createView(),
         ]);
     }
 }

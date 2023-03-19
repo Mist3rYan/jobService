@@ -60,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(nullable: true)]
     private ?int $idConsultantValidate = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Annonce::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'recruteur', targetEntity: Annonce::class, orphanRemoval: true)]
     private Collection $recruteur;
 
     public function __construct()

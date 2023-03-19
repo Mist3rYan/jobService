@@ -9,15 +9,15 @@
 				{% if app.user %}
 					{% if app.user.roles[0] != 'ROLE_CONSULTANT' %}
 						<li class="nav-item">
-							<a class="nav-link" href="/annonce">Annonces</a>
+							<a class="nav-link" href="{{path('annonce.index')}}">Annonces</a>
 						</li>
 					{% endif %}
 					<li class="nav-item">
-						<a class="nav-link" href="/utilisateur/moncompte">Mon compte</a>
+						<a class="nav-link" href="{{path('user.index')}}">Mon compte</a>
 					</li>
 					{% if app.user.roles[0] == 'ROLE_RECRUTEUR' %}
 						<li class="nav-item">
-							<a class="nav-link" href="/annonce/mesannonces">Mes annonces</a>
+							<a class="nav-link" href="{{path('annonce.liste')}}">Mes annonces</a>
 						</li>
 					{% endif %}
 					{% if app.user.roles[0] == 'ROLE_CONSULTANT' %}
@@ -27,7 +27,7 @@
 					{% endif %}
 				{% else %}
 					<li class="nav-item">
-						<a class="nav-link" href="/annonce">Annonces</a>
+						<a class="nav-link" href="{{path('annonce.index')}}">Annonces</a>
 					</li>
 				{% endif %}
 			</ul>
