@@ -43,7 +43,9 @@
 						<td class="text-left">
 							MON CV
 						</td>
-						<td class="text-left"><a href="{{ '/uploads/' ~ user.cv }}">Télécharger</a></td>
+						<td class="text-left">
+							<a href="{{ '/uploads/' ~ user.cv }}">Télécharger</a>
+						</td>
 					</tr>
 				{% endif %}
 				{% if app.user.roles[0] == 'ROLE_RECRUTEUR' %}
@@ -65,7 +67,10 @@
 	</div>
 	<div class="container text-center">
 		{% if app.user.roles[0] == 'ROLE_RECRUTEUR' %}
-			<a href="{{path('user.delete', {id: user.id})}}" class="btn btn-danger">Supprimer</a>
+			<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal">Supprimer</button>
+			{% block modal %}
+				{% include "partials/_modal.html.twig" %}
+			{% endblock %}
 			<a href="{{path('user.edit', {id: user.id})}}" class="btn btn-warning">Modifier</a>
 		{% endif %}
 		{% if app.user.roles[0] == 'ROLE_CANDIDAT' %}

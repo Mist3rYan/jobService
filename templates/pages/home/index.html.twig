@@ -19,27 +19,30 @@
 	</div>
 	<div class="container">
 		<h2 class="mt-5">Qui sommes nous</h2>
-		<p><strong>TRT Conseil</strong> est une agence de recrutement spécialisée dans l'hôtellerie et la restauration. 
-		Fondée en 2014, la société s'est agrandie au fil des ans et possède dorénavant plus de 12 centres dispersés aux 
-		quatre coins de la France. Le service fournit est une plate-forme en ligne pour que les candidats puissent créer un profil, 
-		télécharger leur CV et postuler à des emplois correspondant à leurs compétences et à leurs intérêts. Le processus commence 
-		par une validation du profil du candidat par un consultant en recrutement. Une fois que le profil est validé, le candidat 
-		peut commencer à postuler à des offres d'emploi proposées par les recruteurs partenaires de TRT Conseil. Les recruteurs 
-		sont alertés immédiatement par email dès qu'un candidat validé postule à une offre d'emploi.
+		<p>
+			<strong>TRT Conseil</strong>
+			est une agence de recrutement spécialisée dans l'hôtellerie et la restauration. 
+					Fondée en 2014, la société s'est agrandie au fil des ans et possède dorénavant plus de 12 centres dispersés aux 
+					quatre coins de la France. Le service fournit est une plate-forme en ligne pour que les candidats puissent créer un profil, 
+					télécharger leur CV et postuler à des emplois correspondant à leurs compétences et à leurs intérêts. Le processus commence 
+					par une validation du profil du candidat par un consultant en recrutement. Une fois que le profil est validé, le candidat 
+					peut commencer à postuler à des offres d'emploi proposées par les recruteurs partenaires de TRT Conseil. Les recruteurs 
+					sont alertés immédiatement par email dès qu'un candidat validé postule à une offre d'emploi.
 		</p>
-		<p>En résumé,<strong>TRT Conseil</strong> met en relation les candidats et les recruteurs en utilisant une plateforme en ligne. Un consultant assure le recrutement.</p>
+		<p>En résumé,<strong>TRT Conseil</strong>
+			met en relation les candidats et les recruteurs en utilisant une plateforme en ligne. Un consultant assure le recrutement.</p>
 	</div>
 	{% if app.user %}
-	<div class="container mt-4 text-center">
-		<a href="{{path('annonce.index')}}">
-			<button type="button" class="btn btn-primary">Annonces</button>
-		</a>
-	</div>
+		<div class="container mt-4 text-center">
+			<a href="{{path('annonce.index')}}">
+				<button type="button" class="btn btn-primary">Annonces</button>
+			</a>
+		</div>
 	{% else %}
-	<div class="container mt-4 text-center">
-		<a href="{{path('security.registration')}}">
-			<button type="button" class="btn btn-primary">Inscrivez-vous</button>
-		</a>
-	</div>
+		<div class="container mt-4 text-center">
+			<a href="{{path('security.registration')}}">
+				<button type="button" class="btn btn-primary">Inscrivez-vous</button>
+			</a>
+		</div>
 	{% endif %}
 {% endblock %}

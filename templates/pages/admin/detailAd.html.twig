@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Offre
+	{{ annonce.id }}
+{% endblock %}
+
+{% block body %}
+	{% if app.user %}
+		{% if annonce|length > 0 %}
+			<div class="container mt-4">
+				<h1>Référence de l'annonce :
+					{{ annonce.id }}</h1>
+				{% for message in app.flashes('danger')%}
+					<div class="alert alert-danger mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				{% for message in app.flashes('success')%}
+					<div class="alert alert-success mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				<table class="table table-striped ">
+					<tbody>
+						<tr class="table-primary">
+							<td class="text-left col-md-2">
+								POSTE
+							</td>
+							<td class="text-left">{{ annonce.poste }}</td>
+						</tr>
+						<tr class="table-primary">
+							<td class="text-left">
+								ADRESSE
+							</td>
+							<td class="text-left">{{ annonce.lieudetravail }}</td>
+						</tr>
+						<tr class="table-primary">
+							<td class="text-left">
+								DESCRIPTION
+							</td>
+							<td class="text-left">{{ annonce.description }}</td>
+						</tr>
+						<tr class="table-primary">
+							<td class="text-left">
+								DATE DE PUBLICATION
+							</td>
+							<td class="text-left">{{ annonce.createAt|date('d/m/Y')}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="container text-center">
+				<a href="{{path('admin.listeAd')}}" class="btn btn-secondary">Retour</a>
+				<a href="{{path('annonce.deleteAdmin', {'id': annonce.id})}}" class="btn btn-danger">Supprimer</a>
+			</div>
+		{% else %}
+			<div class="alert alert-dismissible alert-danger">
+				<strong>Aucune offre trouvée</strong>
+			</div>
+		{% endif %}
+	{% else  %}
+		<div class="container">
+			{% include 'security/login.html.twig' %}
+		</div>
+	{% endif %}
+{% endblock %}

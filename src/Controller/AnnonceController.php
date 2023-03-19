@@ -16,6 +16,45 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AnnonceController extends AbstractController
 {
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/annonce/delete/{id}', name: 'annonce.deleteAdmin', methods: ['GET'])]
+    public function deleteAdmin(Annonce $annonce, ManagerRegistry $doctrine): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY'); // on verifie que l'utilisateur est connecté
+        $em = $doctrine->getManager();
+        $em->remove($annonce); // on supprime l'objet $post
+        $em->flush();
+        $this->addFlash(
+            'danger',
+            "L' annonce a été supprimée !"
+         );
+        //redirection vers la page d'accueil
+        return $this->redirectToRoute('admin.listeAd');
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/detail/{id}', name: 'admin.detailAd', methods: ['GET', 'POST'])]
+    public function adDetailAdmin(Annonce $annonce): Response
+    {
+        return $this->render('pages/admin/detailAd.html.twig', [
+            'annonce' => $annonce,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/annonce', name: 'admin.listeAd', methods: ['GET', 'POST'])]
+    public function adListeAdmin(AnnonceRepository $repositery, PaginatorInterface $paginator, Request $request): Response
+    {
+        $annonces = $paginator->paginate(
+            $repositery->findAll(), /* query NOT result */
+            $request->query->getInt('page',1), /*page number*/
+            6 /*limit per page*/
+        );
+        return $this->render('pages/admin/listeAd.html.twig', [
+            'annonces' => $annonces,
+        ]);
+    }
+
     #[IsGranted('ROLE_CONSULTANT')]
     #[Route('/consultant/annoncevalider/{id}', name: 'consultant.validAd', methods: ['GET','POST'])]
     public function validAd(Annonce $annonce, EntityManagerInterface $manager): Response
@@ -24,7 +63,7 @@ class AnnonceController extends AbstractController
             $annonce->setIsValid(1);
             $manager->persist($annonce);
             $manager->flush();
-            $this->addFlash('success', 'Votre annonce a bien été validée !');
+            $this->addFlash('success', "L'annonce a bien été validée !");
             return $this->redirectToRoute('consultant.listeAd');
         }
         return $this->render('pages/consultant/detailAd.html.twig', [
@@ -39,7 +78,7 @@ class AnnonceController extends AbstractController
         $annonces = $paginator->paginate(
             $repositery->findBy(["isValid" => "0"]), /* query NOT result */
             $request->query->getInt('page',1), /*page number*/
-            7 /*limit per page*/
+            6 /*limit per page*/
         );
         return $this->render('pages/consultant/listeAd.html.twig', [
             'annonces' => $annonces,
@@ -55,13 +94,13 @@ class AnnonceController extends AbstractController
         ]);
     }
 
-    #[Route('/annonces', name: 'annonce.index', methods: ['GET'])]
+    #[Route('/offres', name: 'annonce.index', methods: ['GET'])]
     public function index(AnnonceRepository $repositery, PaginatorInterface $paginator, Request $request): Response
     {
         $annonces = $paginator->paginate(
             $repositery->findBy(["isValid" => "1"]), /* query NOT result */
             $request->query->getInt('page',1), /*page number*/
-            7 /*limit per page*/
+            6 /*limit per page*/
         );
         return $this->render('pages/annonce/index.html.twig', [
             'annonces' => $annonces,
@@ -108,7 +147,7 @@ class AnnonceController extends AbstractController
         $annonces = $paginator->paginate(
             $repositery->findBy(['recruteur'=> $this->getUser()]), /* query NOT result */
             $request->query->getInt('page',1), /*page number*/
-            7 /*limit per page*/
+            6 /*limit per page*/
         );
         return $this->render('pages/annonce/liste.html.twig', [
             'annonces' => $annonces,
@@ -146,9 +185,10 @@ class AnnonceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+                $annonce->setIsValid(0);
                 $manager->persist($annonce);
                 $manager->flush();
-                $this->addFlash('success', 'Votre annonce a bien été modifié !');
+                $this->addFlash('success', 'Votre annonce a bien été modifié ! Elle est en attente de validation par un consultant.');
                 return $this->redirectToRoute('annonce.liste');
         }
         return $this->render('pages/annonce/edit.html.twig', [

@@ -20,6 +20,42 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class UserController extends AbstractController
 {
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/suppression/{id}', name: 'admin.candidatDelete', methods: ['GET', 'POST'])]
+    public function candidatDeleteAdmin(User $user, ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $entityManager->remove($user);
+        $entityManager->flush();
+        $this->addFlash('danger', 'Le candidat à bien été supprimé !');
+        return $this->redirectToRoute('admin.candidatListe');
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/candidat/{id}', name: 'admin.candidatDetail', methods: ['GET', 'POST'])]
+    public function candidatDetailAdmin(User $user): Response
+    {
+        return $this->render('pages/admin/detailCandidat.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/candidat', name: 'admin.candidatListe', methods: ['GET', 'POST'])]
+    public function candidatListeAdmin(UserRepository $repositery, PaginatorInterface $paginator, Request $request): Response
+    {
+        $users = $paginator->paginate(
+            $repositery->findBy([
+                'roles' => ['["ROLE_CANDIDAT"]'],
+            ]),/* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
+            6 /*limit per page*/
+        );
+        return $this->render('pages/admin/listeCandidat.html.twig', [
+            'users' => $users,
+        ]);
+    }
+    
     #[Route('/utilisateur/moncompte', name: 'user.index', methods: ['GET', 'POST'])]
     public function index(): Response
     {
@@ -106,7 +142,7 @@ class UserController extends AbstractController
 
     #[IsGranted('ROLE_CONSULTANT')]
     #[Route('/consultant/panneaudecontrole', name: 'consultant.board', methods: ['GET', 'POST'])]
-    public function board(UserRepository $repositery, AnnonceRepository $repositeryAd, Request $request): Response
+    public function board(UserRepository $repositery, AnnonceRepository $repositeryAd): Response
     {
         if (!$this->getUser()) {
             return $this->redirectToRoute('security.login');
@@ -133,7 +169,7 @@ class UserController extends AbstractController
                 "isValid" => "0"
             ]),/* query NOT result */
             $request->query->getInt('page', 1), /*page number*/
-            7 /*limit per page*/
+            6 /*limit per page*/
         );
         return $this->render('pages/consultant/listeUser.html.twig', [
             'users' => $users,
@@ -148,4 +184,17 @@ class UserController extends AbstractController
             'user' => $user,
         ]);
     }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/board', name: 'admin.index', methods: ['GET', 'POST'])]
+    public function indexAdmin(): Response
+    {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('security.login');
+        }
+        return $this->render('pages/admin/index.html.twig', [
+            'user' => $this->getUser(),
+        ]);
+    }
+    
 }

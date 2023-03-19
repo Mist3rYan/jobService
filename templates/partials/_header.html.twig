@@ -25,6 +25,11 @@
 							<a class="nav-link" href="{{path('consultant.board')}}">Panneau de controle</a>
 						</li>
 					{% endif %}
+					{% if app.user.roles[0] == 'ROLE_ADMIN' %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{path('admin.index')}}">Panneau de controle administrateur</a>
+						</li>
+					{% endif %}
 				{% else %}
 					<li class="nav-item">
 						<a class="nav-link" href="{{path('annonce.index')}}">Annonces</a>

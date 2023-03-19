@@ -38,7 +38,7 @@
 							<th scope="col" class="text-center">Lieu</th>
 							<th scope="col" class="text-center">Description</th>
 							<th scope="col" class="text-center">Date</th>
-							<th scope="col" class="text-center">Détails</th>
+							<th scope="col" class="col-1 text-center">Détails</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -47,12 +47,12 @@
 								<tr
 									class="table-primary">
 									{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
-									<td class="text-center">{{ annonce.poste }}</td>
-									<td class="text-center">{{ annonce.lieudetravail }}</td>
-									<td class="text-center">{{ annonce.description }}</td>
-									<td class="text-center">{{ annonce.createAt|date('d/m/Y')}}</td>
-									<td class="text-center">
-										<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success">Voir</a>
+									<td class="text-center align-middle">{{ annonce.poste }}</td>
+									<td class="text-center align-middle">{{ annonce.lieudetravail }}</td>
+									<td class="text-center align-middle">{{ annonce.description }}</td>
+									<td class="text-center align-middle">{{ annonce.createAt|date('d/m/Y')}}</td>
+									<td class="text-center align-middle">
+										<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success btn-lg w-100">Voir</a>
 									</td>
 								</tr>
 							{% endif %}
@@ -69,21 +69,20 @@
 							<th scope="col" class="text-center">Lieu</th>
 							<th scope="col" class="text-center">Description</th>
 							<th scope="col" class="text-center">Date</th>
-							<th scope="col" class="text-center">Détails</th>
+							<th scope="col" class="col-1 text-center">Détails</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for annonce in annonces %}
 							{% if annonce.isValid == 1 %}
-								<tr
-									class="table-primary">
+								<tr class="table-primary">
 									{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
-									<td class="text-center">{{ annonce.poste }}</td>
-									<td class="text-center">{{ annonce.lieudetravail }}</td>
-									<td class="text-center">{{ annonce.description }}</td>
-									<td class="text-center">{{ annonce.createAt|date('d/m/Y')}}</td>
-									<td class="text-center">
-										<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success">Voir</a>
+									<td class="text-center align-middle">{{ annonce.poste }}</td>
+									<td class="text-center align-middle">{{ annonce.lieudetravail }}</td>
+									<td class="text-center align-middle">{{ annonce.description }}</td>
+									<td class="text-center align-middle">{{ annonce.createAt|date('d/m/Y')}}</td>
+									<td class="text-center align-middle">
+										<a href="{{ path('annonce.detail', {'id': annonce.id}) }}" class="btn btn-success btn-lg w-100">Voir</a>
 									</td>
 								</tr>
 							{% endif %}
