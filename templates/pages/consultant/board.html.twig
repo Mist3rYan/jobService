@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block body %}
+
 	<div class="container mt-4">
 		<h1 class="text-center">PANNEAU DE CONTROLE</h1>
 		{% for message in app.flashes('danger')%}
@@ -18,24 +19,31 @@
 			</div>
 		{% endfor %}
 	</div>
-	<div class="container">
-		<div class="row mt-4">
-			<div class="col">
-				<a href="{{ path('consultant.listeUser') }}" class="btn btn-success btn-lg w-100">Candidats / Recruteurs à valider (
-					{{ nbUser }}
-					à valider)</a>
+	{% if user.isValid != 0 %}
+		<div class="container mt-4">
+			<div class="row mt-4">
+				<div class="col">
+					<a href="{{ path('consultant.listeUser') }}" class="btn btn-success btn-lg w-100">Candidats / Recruteurs à valider (
+						{{ nbUser }}
+						à valider)</a>
+				</div>
+			</div>
+			<div class="row mt-4">
+				<div class="col">
+					<a href="{{ path('consultant.listeAd') }}" class="btn btn-success btn-lg w-100">Annonces à valider (
+						{{ nbAd }}
+						à valider)</a>
+				</div>
+				<div class="col">
+					<a href="#" class="btn btn-success btn-lg w-100">Candidatures à valider</a>
+				</div>
 			</div>
 		</div>
-		<div class="row mt-4">
-			<div class="col">
-				<a href="{{ path('consultant.listeAd') }}" class="btn btn-success btn-lg w-100">Annonces à valider (
-					{{ nbAd }}
-					à valider)</a>
-			</div>
-			<div class="col">
-				<a href="#" class="btn btn-success btn-lg w-100">Candidatures à valider</a>
+	{% else %}
+		<div class="container mt-4">
+			<div class="alert alert-danger mt-4">
+				Vote compte est désactivé.
 			</div>
 		</div>
-	</div>
-
+	{% endif %}
 {% endblock %}

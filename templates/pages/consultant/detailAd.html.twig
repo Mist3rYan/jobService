@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body %}
-	{% if app.user %}
+	{% if app.user.isValid != 0 %}
 		{% if annonce|length > 0 %}
 			<div class="container mt-4">
 				<h1>Référence de l'annonce :
@@ -69,8 +69,10 @@
 			</div>
 		{% endif %}
 	{% else  %}
-		<div class="container">
-			{% include 'security/login.html.twig' %}
+		<div class="container mt-4">
+						<div class="alert alert-danger mt-4">
+				Vote compte est désactivé.
+			</div>
 		</div>
 	{% endif %}
 {% endblock %}

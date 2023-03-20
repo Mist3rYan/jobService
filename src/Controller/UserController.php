@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Form\RegistrationType;
 use App\Repository\AnnonceRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -53,6 +54,103 @@ class UserController extends AbstractController
         ]);
     }
 
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/createconsultant', name: 'admin.createConsultant', methods: ['GET', 'POST'])]
+    public function createConsultant(Request $request, EntityManagerInterface $manager) : Response
+    {
+        $user = new User();
+        $form = $this->createForm(RegistrationType::class, $user);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()){
+            $user = $form->getData();
+            $user->setRoles(array('ROLE_CONSULTANT'));
+            $user->setIsValid(true);
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash('success', 'Le consultant a bien été créé !');
+
+            return $this->redirectToRoute('admin.consultantListe');
+        }
+
+        return $this->render('pages/admin/createConsultant.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/suppressionconsultant/{id}', name: 'admin.consultantDelete', methods: ['GET', 'POST'])]
+    public function consultantDeleteAdmin(User $user, ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $entityManager->remove($user);
+        $entityManager->flush();
+        $this->addFlash('danger', 'Le consultant à bien été supprimé !');
+        return $this->redirectToRoute('admin.consultantListe');
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/activateconsultant/{id}', name: 'admin.consultantActivate', methods: ['GET', 'POST'])]
+    public function consultantActivateAdmin(User $user, EntityManagerInterface $manager): Response
+    {
+        if ($user->getIsValid() == 0) {
+            $user->setIsValid(1);
+            $manager->persist($user);
+            $manager->flush();
+            $this->addFlash('success', 'Le consultant à bien été activé !');
+            return $this->redirectToRoute('admin.consultantDetail', [
+                'id' => $user->getId(),
+            ]);
+        }
+        return $this->render('pages/admin/detailConsultant.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/desactivateonsultant/{id}', name: 'admin.consultantDesactivate', methods: ['GET', 'POST'])]
+    public function consultantDesactivateAdmin(User $user, EntityManagerInterface $manager): Response
+    {
+        if ($user->getIsValid() == 1) {
+            $user->setIsValid(0);
+            $manager->persist($user);
+            $manager->flush();
+            $this->addFlash('success', 'Le consultant à bien été désactivé !');
+            return $this->redirectToRoute('admin.consultantDetail', [
+                'id' => $user->getId(),
+            ]);
+        }
+        return $this->render('pages/admin/detailConsultant.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/detailconsultant/{id}', name: 'admin.consultantDetail', methods: ['GET', 'POST'])]
+    public function consultantDetailAdmin(User $user): Response
+    {
+        return $this->render('pages/admin/detailConsultant.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/listeconsultant', name: 'admin.consultantListe', methods: ['GET', 'POST'])]
+    public function consultantListeAdmin(UserRepository $repositery, PaginatorInterface $paginator, Request $request): Response
+    {
+        $users = $paginator->paginate(
+            $repositery->findBy([
+                'roles' => ['["ROLE_CONSULTANT"]'],
+            ]),/* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
+            6 /*limit per page*/
+        );
+        return $this->render('pages/admin/listeConsultant.html.twig', [
+            'users' => $users,
+        ]);
+    }
+    
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/suppressioncandidat/{id}', name: 'admin.candidatDelete', methods: ['GET', 'POST'])]
     public function candidatDeleteAdmin(User $user, ManagerRegistry $doctrine): Response

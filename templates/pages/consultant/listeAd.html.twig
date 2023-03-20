@@ -5,67 +5,77 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container mt-4">
-		{% if annonces|length > 0 %}
-			<h1>Les offres d'emploi à valider</h1>
-			{% for message in app.flashes('danger')%}
-				<div class="alert alert-danger mt-4">
-					{{ message }}
-				</div>
-			{% endfor %}
-			{% for message in app.flashes('success')%}
-				<div class="alert alert-success mt-4">
-					{{ message }}
-				</div>
-			{% endfor %}
-			{# total items count #}
-			<div class="row mt-4 d-flex align-items-center">
-				<div class="col-10">
-					<div class="p-3 bg-primary text-white">
-						<strong>Nombre d'annonces à valider: 
-							{{ annonces.getTotalItemCount }}</strong>
+	{% if app.user.isValid != 0 %}
+		<div class="container mt-4">
+			{% if annonces|length > 0 %}
+				<h1>Les offres d'emploi à valider</h1>
+				{% for message in app.flashes('danger')%}
+					<div class="alert alert-danger mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				{% for message in app.flashes('success')%}
+					<div class="alert alert-success mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				{# total items count #}
+				<div class="row mt-4 d-flex align-items-center">
+					<div class="col-10">
+						<div class="p-3 bg-primary text-white">
+							<strong>Nombre d'annonces à valider:
+								{{ annonces.getTotalItemCount }}</strong>
+						</div>
+					</div>
+					<div class="col-2">
+						<a href="{{ path('consultant.board') }}" class="btn btn-secondary btn-lg w-100">Retour</a>
 					</div>
 				</div>
-				<div class="col-2"><a href="{{ path('consultant.board') }}" class="btn btn-secondary btn-lg w-100">Retour</a></div>
-			</div>
 
 
-			<table class="table table-hover ">
-				<thead>
-					<tr>
-						{# <th scope="col" class="text-center">Numéro</th> #}
-						<th scope="col" class="text-center">Poste</th>
-						<th scope="col" class="text-center">Lieu</th>
-						<th scope="col" class="text-center">Description</th>
-						<th scope="col" class="text-center">Date</th>
-						<th scope="col" class="col-1 text-center">Détails</th>
+				<table class="table table-hover ">
+					<thead>
+						<tr>
+							{# <th scope="col" class="text-center">Numéro</th> #}
+							<th scope="col" class="text-center">Poste</th>
+							<th scope="col" class="text-center">Lieu</th>
+							<th scope="col" class="text-center">Description</th>
+							<th scope="col" class="text-center">Date</th>
+							<th scope="col" class="col-1 text-center">Détails</th>
 
-					</tr>
-				</thead>
-				<tbody>
-					{% for annonce in annonces %}
-						<tr
-							class="table-primary">
-							{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
-							<td class="text-center align-middle">{{ annonce.poste }}</td>
-							<td class="text-center align-middle">{{ annonce.lieudetravail }}</td>
-							<td class="text-center align-middle">{{ annonce.description }}</td>
-							<td class="text-center align-middle">{{ annonce.createAt|date('d/m/Y')}}</td>
-							<td class="text-center align-middle">
-								<a href="{{ path('consultant.detailAd', {'id': annonce.id}) }}" class="btn btn-success btn-lg w-100">Voir</a>
-							</td>
 						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-			{# display navigation #}
-			<div class="navigation d-flex justify-content-center">
-				{{ knp_pagination_render(annonces) }}
+					</thead>
+					<tbody>
+						{% for annonce in annonces %}
+							<tr
+								class="table-primary">
+								{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
+								<td class="text-center align-middle">{{ annonce.poste }}</td>
+								<td class="text-center align-middle">{{ annonce.lieudetravail }}</td>
+								<td class="text-center align-middle">{{ annonce.description }}</td>
+								<td class="text-center align-middle">{{ annonce.createAt|date('d/m/Y')}}</td>
+								<td class="text-center align-middle">
+									<a href="{{ path('consultant.detailAd', {'id': annonce.id}) }}" class="btn btn-success btn-lg w-100">Voir</a>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+				{# display navigation #}
+				<div class="navigation d-flex justify-content-center">
+					{{ knp_pagination_render(annonces) }}
+				</div>
+			{% else %}
+				<div class="alert alert-dismissible alert-danger">
+					<strong>Aucune offre trouvée</strong>
+				</div>
+			{% endif %}
+		</div>
+	{% else  %}
+		<div class="container mt-4">
+			<div class="alert alert-danger mt-4">
+				Vote compte est désactivé.
 			</div>
-		{% else %}
-			<div class="alert alert-dismissible alert-danger">
-				<strong>Aucune offre trouvée</strong>
-			</div>
-		{% endif %}
-	</div>
+		</div>
+	{% endif %}
 {% endblock %}

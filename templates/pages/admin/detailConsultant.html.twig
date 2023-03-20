@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	Utilisateur à valider
+	Consultant
 {% endblock %}
 
 {% block body %}
-	{% if app.user.isValid != 0 %}
+	{% if app.user %}
 		<div class="container mt-4">
 			{% if user|length > 0 %}
-				<h1>Référence de l'utilisateur à valider :
+				<h1>Référence du consultant:
 					{{ user.id }}</h1>
 				{% for message in app.flashes('danger')%}
 					<div class="alert alert-danger mt-4">
@@ -23,14 +23,20 @@
 				<table class="table table-striped ">
 					<tbody>
 						<tr class="table-primary">
+							<td class="text-left">
+								ACTIF
+							</td>
+							{% if user.isValid == 0 %}
+								<td class="text-left">NON</td>
+							{% else %}
+								<td class="text-left">OUI</td>
+							{% endif %}
+						</tr>
+						<tr class="table-primary">
 							<td class="text-left col-md-2">
 								STATUT
 							</td>
-							{% if user.roles[0] == 'ROLE_RECRUTEUR' %}
-								<td class="text-left">RECRUTEUR</td>
-							{% else %}
-								<td class="text-left">CANDIDAT</td>
-							{% endif %}
+							<td class="text-left">CONSULTANT</td>
 						</tr>
 						<tr class="table-primary">
 							<td class="text-left col-md-2">
@@ -44,29 +50,6 @@
 							</td>
 							<td class="text-left">{{ user.name }}</td>
 						</tr>
-						{% if user.roles[0] == 'ROLE_CANDIDAT' %}
-							<tr class="table-primary">
-								<td class="text-left">
-									PRENOM
-								</td>
-								<td class="text-left">{{ user.firstname }}</td>
-							</tr>
-
-							<tr class="table-primary">
-								<td class="text-left">
-									MON CV
-								</td>
-								<td class="text-left"><a href="{{ '/uploads/' ~ user.cv }}">Télécharger</a></td>
-							</tr>
-						{% endif %}
-						{% if user.roles[0] == 'ROLE_RECRUTEUR' %}
-							<tr class="table-primary">
-								<td class="text-left">
-									ADRESSE
-								</td>
-								<td class="text-left">{{ user.address }}</td>
-							</tr>
-						{% endif %}
 						<tr class="table-primary">
 							<td class="text-left">
 								DATE DE CREATION
@@ -82,18 +65,17 @@
 			{% endif %}
 		</div>
 		<div class="container text-center">
-			{% if app.user.roles[0] == 'ROLE_CONSULTANT' %}
-				<a href="{{path('consultant.listeUser')}}" class="btn btn-secondary">Retour</a>
-				{% if user.IsValid == 0 %}
-					<a href="{{path('consultant.validUser',{'id': user.id})}}"class="btn btn-success">Valider</a>
-				{% endif %}
+			<a href="{{path('admin.consultantListe')}}" class="btn btn-secondary">Retour</a>
+			<a href="{{path('admin.consultantDelete',{'id': user.id})}}" class="btn btn-danger">Supprimer</a>
+			{% if user.isValid == 0 %}
+				<a href="{{path('admin.consultantActivate',{'id': user.id})}}" class="btn btn-info">Activer</a>
+			{% else %}
+				<a href="{{path('admin.consultantDesactivate',{'id': user.id})}}" class="btn btn-warning">Désactiver</a>
 			{% endif %}
 		</div>
 	{% else  %}
-		<div class="container mt-4">
-						<div class="alert alert-danger mt-4">
-				Vote compte est désactivé.
-			</div>
+		<div class="container">
+			{% include 'security/login.html.twig' %}
 		</div>
 	{% endif %}
 {% endblock %}

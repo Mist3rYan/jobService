@@ -17,7 +17,6 @@ security:
             lazy: true
             provider: app_user_provider
             form_login:
-                default_target_path: user.index
                 login_path: security.login
                 check_path: security.login
             logout:

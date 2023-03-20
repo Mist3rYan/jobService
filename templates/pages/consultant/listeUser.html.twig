@@ -5,70 +5,79 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container mt-4">
-        {% set affichage = false %}
-		{% if users|length > 0 %}
-			<h1>Liste des utilisateurs à valider</h1>
-			{% for message in app.flashes('danger')%}
-				<div class="alert alert-danger mt-4">
-					{{ message }}
-				</div>
-			{% endfor %}
-			{% for message in app.flashes('success')%}
-				<div class="alert alert-success mt-4">
-					{{ message }}
-				</div>
-			{% endfor %}
-			{# total items count #}
-			<div class="row mt-4 d-flex align-items-center">
-				<div class="col-10">
-					<div class="p-3 bg-primary text-white">
-						<strong>Nombre de candidat à valider: 
-							{{ users.getTotalItemCount }}</strong>
+	{% if app.user.isValid != 0 %}
+		<div class="container mt-4">
+			{% if users|length > 0 %}
+				<h1>Liste des utilisateurs à valider</h1>
+				{% for message in app.flashes('danger')%}
+					<div class="alert alert-danger mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				{% for message in app.flashes('success')%}
+					<div class="alert alert-success mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				{# total items count #}
+				<div class="row mt-4 d-flex align-items-center">
+					<div class="col-10">
+						<div class="p-3 bg-primary text-white">
+							<strong>Nombre de candidat à valider:
+								{{ users.getTotalItemCount }}</strong>
+						</div>
+					</div>
+					<div class="col-2">
+						<a href="{{ path('consultant.board') }}" class="btn btn-secondary btn-lg w-100">Retour</a>
 					</div>
 				</div>
-				<div class="col-2"><a href="{{ path('consultant.board') }}" class="btn btn-secondary btn-lg w-100">Retour</a></div>
-			</div>
 
 
-			<table class="table table-hover ">
-				<thead>
-					<tr>
-						{# <th scope="col" class="text-center">Numéro</th> #}
-                        <th scope="col" class="text-center">Statut</th>
-						<th scope="col" class="text-center">Email</th>
-						<th scope="col" class="text-center">Date d'inscription</th>
-						<th scope="col" class="text-center">Détails</th>
+				<table class="table table-hover ">
+					<thead>
+						<tr>
+							{# <th scope="col" class="text-center">Numéro</th> #}
+							<th scope="col" class="text-center">Statut</th>
+							<th scope="col" class="text-center">Email</th>
+							<th scope="col" class="text-center">Date d'inscription</th>
+							<th scope="col" class="text-center">Détails</th>
 
-					</tr>
-				</thead>
-				<tbody>
-					{% for user in users %}
-                    {% if user.isValid == 0 %}
-						<tr class="table-primary">
-                        {% if user.roles[0] == 'ROLE_RECRUTEUR' %}
-							<td class="text-center align-middle">RECRUTEUR</td>
-                        {% else %}
-                        <td class="text-center align-middle">CANDIDAT</td>
-                        {% endif %}
-							<td class="text-center align-middle">{{ user.email }}</td>
-							<td class="text-center align-middle">{{ user.createdAt|date('d/m/Y')}}</td>
-							<td class="text-center align-middle">
-								<a href="{{ path('consultant.detailUser', {'id': user.id}) }}" class="btn btn-success btn-lg w-100">Voir</a>
-							</td>
 						</tr>
-                    {% endif %}
-					{% endfor %}
-				</tbody>
-			</table>
-			{# display navigation #}
-			<div class="navigation d-flex justify-content-center">
-				{{ knp_pagination_render(users) }}
+					</thead>
+					<tbody>
+						{% for user in users %}
+							{% if user.isValid == 0 %}
+								<tr class="table-primary">
+									{% if user.roles[0] == 'ROLE_RECRUTEUR' %}
+										<td class="text-center align-middle">RECRUTEUR</td>
+									{% else %}
+										<td class="text-center align-middle">CANDIDAT</td>
+									{% endif %}
+									<td class="text-center align-middle">{{ user.email }}</td>
+									<td class="text-center align-middle">{{ user.createdAt|date('d/m/Y')}}</td>
+									<td class="text-center align-middle">
+										<a href="{{ path('consultant.detailUser', {'id': user.id}) }}" class="btn btn-success btn-lg w-100">Voir</a>
+									</td>
+								</tr>
+							{% endif %}
+						{% endfor %}
+					</tbody>
+				</table>
+				{# display navigation #}
+				<div class="navigation d-flex justify-content-center">
+					{{ knp_pagination_render(users) }}
+				</div>
+			{% else %}
+				<div class="alert alert-dismissible alert-danger">
+					<strong>Aucun utilisateur trouvé</strong>
+				</div>
+			{% endif %}
+		</div>
+	{% else  %}
+		<div class="container mt-4">
+			<div class="alert alert-danger mt-4">
+				Vote compte est désactivé.
 			</div>
-		{% else %}
-			<div class="alert alert-dismissible alert-danger">
-				<strong>Aucun ustilisateur trouvé</strong>
-			</div>
-		{% endif %}
-	</div>
+		</div>
+	{% endif %}
 {% endblock %}

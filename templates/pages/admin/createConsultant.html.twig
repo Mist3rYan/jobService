@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Création Consultant
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<h1 class="mt-4">Création Consultant</h1>
+		{% for message in app.flashes('danger') %}
+			<div class="alert alert-danger mt-4" role="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success mt-4" role="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+		{{ form_start(form) }}
+		{{ form_errors(form) }}
+		{{ form_row(form.email) }}
+		{{ form_widget(form.roles, {"attr": {"class": "d-none"}}) }}
+		{{ form_row(form.plainpassword) }}
+		{{ form_row(form.submit, {"attr": {"class": "btn btn-warning mt-4"},"label":"Création"}) }}
+		{{ form_end(form) }}
+	</div>
+{% endblock %}
