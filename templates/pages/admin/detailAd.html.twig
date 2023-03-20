@@ -25,7 +25,7 @@
 					<tbody>
 						<tr class="table-primary">
 							<td class="text-left">
-								RECRTUTEUR
+								RECRUTEUR
 							</td>
 							<td class="text-left">  {{ nomRecuteur }}</td>
 						</tr>
@@ -53,6 +53,14 @@
 							</td>
 							<td class="text-left">{{ annonce.createAt|date('d/m/Y')}}</td>
 						</tr>
+						{% if annonce.idvalidatonconsultant != null %}
+						<tr class="table-primary">
+							<td class="text-left">
+								VALIDER PAR
+							</td>
+							<td class="text-left"><a href="{{ path('admin.viewConsultant', {'id': annonce.idvalidatonconsultant,'idAnnonce': annonce.id}) }}" class="btn btn-success">Voir</a></td>
+						</tr>
+						{% endif %}
 					</tbody>
 				</table>
 			</div>

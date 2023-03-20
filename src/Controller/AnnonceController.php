@@ -34,7 +34,7 @@ class AnnonceController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/detail/{id}', name: 'admin.detailAd', methods: ['GET', 'POST'])]
-    public function adDetailAdmin(Annonce $annonce, ManagerRegistry $doctrine): Response
+    public function adDetailAdmin(Annonce $annonce): Response
     {
         $nomRecuteur = $annonce->getRecruteur()->getEmail();
         return $this->render('pages/admin/detailAd.html.twig', [
@@ -58,11 +58,12 @@ class AnnonceController extends AbstractController
     }
 
     #[IsGranted('ROLE_CONSULTANT')]
-    #[Route('/consultant/annoncevalider/{id}', name: 'consultant.validAd', methods: ['GET','POST'])]
-    public function validAd(Annonce $annonce, EntityManagerInterface $manager): Response
+    #[Route('/consultant/annoncevalider/{id}/{idConsultant}', name: 'consultant.validAd', methods: ['GET','POST'])]
+    public function validAd(Annonce $annonce, $idConsultant, EntityManagerInterface $manager): Response
     {
         if($annonce->getIsValid() == 0){
             $annonce->setIsValid(1);
+            $annonce->setIdValidatonConsultant($idConsultant);
             $manager->persist($annonce);
             $manager->flush();
             $this->addFlash('success', "L'annonce a bien été validée !");

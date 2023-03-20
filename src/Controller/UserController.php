@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\User;
 use App\Form\UserType;
 use App\Form\RegistrationType;
@@ -17,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Console\Helper\Dumper;
 
 class UserController extends AbstractController
 {
@@ -56,13 +58,13 @@ class UserController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/createconsultant', name: 'admin.createConsultant', methods: ['GET', 'POST'])]
-    public function createConsultant(Request $request, EntityManagerInterface $manager) : Response
+    public function createConsultant(Request $request, EntityManagerInterface $manager): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationType::class, $user);
 
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $user = $form->getData();
             $user->setRoles(array('ROLE_CONSULTANT'));
             $user->setIsValid(true);
@@ -81,8 +83,20 @@ class UserController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/suppressionconsultant/{id}', name: 'admin.consultantDelete', methods: ['GET', 'POST'])]
-    public function consultantDeleteAdmin(User $user, ManagerRegistry $doctrine): Response
+    public function consultantDeleteAdmin(User $user, UserRepository $utilisateur, AnnonceRepository $annonce, EntityManagerInterface $manager,  ManagerRegistry $doctrine): Response
     {
+        $annonces = $annonce->findBy(['id_validaton_consultant' => $user->getId()]);
+        foreach ($annonces as $annonce) {
+            $annonce->setIdValidatonConsultant('');
+            $manager->persist($annonce);
+            $manager->flush();
+        }
+        $utilisateurs = $utilisateur->findBy(['idConsultantValidate' => $user->getId()]);
+        foreach ($utilisateurs as $utilisateur) {
+            $utilisateur->setIdConsultantValidate(null);
+            $manager->persist($utilisateur);
+            $manager->flush();
+        }
         $entityManager = $doctrine->getManager();
         $entityManager->remove($user);
         $entityManager->flush();
@@ -136,6 +150,42 @@ class UserController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/voirconsultant/{id}/{idAnnonce}', name: 'admin.viewConsultant', methods: ['GET', 'POST'])]
+    public function viewConsultantAdmin($id, $idAnnonce, AnnonceRepository $annonce, UserRepository $user): Response
+    {
+        $user = $user->find($id);
+        $annonce = $annonce->find($idAnnonce);
+        return $this->render('pages/admin/viewConsultant.html.twig', [
+            'user' => $user,
+            'annonce' => $annonce,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/voiruser/{id}/{idUser}', name: 'admin.viewConsultantUser', methods: ['GET', 'POST'])]
+    public function viewConsultantUserAdmin($id, $idUser, UserRepository $user2, UserRepository $user): Response
+    {
+        $user = $user->find($id);
+        $userBis = $user2->find($idUser);
+        return $this->render('pages/admin/viewUser.html.twig', [
+            'user' => $user,
+            'userBis' => $userBis,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/voirrecruteur/{id}/{idUser}', name: 'admin.viewConsultantRecruteur', methods: ['GET', 'POST'])]
+    public function viewConsultantRecruteurAdmin($id, $idUser, UserRepository $user2, UserRepository $user): Response
+    {
+        $user = $user->find($id);
+        $userBis = $user2->find($idUser);
+        return $this->render('pages/admin/viewRecruteur.html.twig', [
+            'user' => $user,
+            'userBis' => $userBis,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/listeconsultant', name: 'admin.consultantListe', methods: ['GET', 'POST'])]
     public function consultantListeAdmin(UserRepository $repositery, PaginatorInterface $paginator, Request $request): Response
     {
@@ -150,7 +200,7 @@ class UserController extends AbstractController
             'users' => $users,
         ]);
     }
-    
+
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/suppressioncandidat/{id}', name: 'admin.candidatDelete', methods: ['GET', 'POST'])]
     public function candidatDeleteAdmin(User $user, ManagerRegistry $doctrine): Response
@@ -222,7 +272,7 @@ class UserController extends AbstractController
             'users' => $users,
         ]);
     }
-    
+
     #[Route('/utilisateur/moncompte', name: 'user.index', methods: ['GET', 'POST'])]
     public function index(): Response
     {
@@ -292,11 +342,12 @@ class UserController extends AbstractController
     }
 
     #[IsGranted('ROLE_CONSULTANT')]
-    #[Route('/consultant/uservalider/{id}', name: 'consultant.validUser', methods: ['GET', 'POST'])]
-    public function validAd(User $user, EntityManagerInterface $manager): Response
+    #[Route('/consultant/uservalider/{id}/{idConsultant}', name: 'consultant.validUser', methods: ['GET', 'POST'])]
+    public function validAd(User $user, $idConsultant, EntityManagerInterface $manager): Response
     {
         if ($user->getIsValid() == 0) {
             $user->setIsValid(1);
+            $user->setIdConsultantValidate($idConsultant);
             $manager->persist($user);
             $manager->flush();
             $this->addFlash('success', 'Le prodil a bien été validé !');
@@ -363,5 +414,4 @@ class UserController extends AbstractController
             'user' => $this->getUser(),
         ]);
     }
-    
 }

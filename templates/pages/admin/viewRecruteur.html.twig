@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	Recruteur
+	Consultant
 {% endblock %}
 
 {% block body %}
 	{% if app.user %}
 		<div class="container mt-4">
 			{% if user|length > 0 %}
-				<h1>Référence du recruteur:
+				<h1>Référence du consultant:
 					{{ user.id }}</h1>
 				{% for message in app.flashes('danger')%}
 					<div class="alert alert-danger mt-4">
@@ -23,10 +23,20 @@
 				<table class="table table-striped ">
 					<tbody>
 						<tr class="table-primary">
+							<td class="text-left">
+								ACTIF
+							</td>
+							{% if user.isValid == 0 %}
+								<td class="text-left">NON</td>
+							{% else %}
+								<td class="text-left">OUI</td>
+							{% endif %}
+						</tr>
+						<tr class="table-primary">
 							<td class="text-left col-md-2">
 								STATUT
 							</td>
-							<td class="text-left">RECRUTEUR</td>
+							<td class="text-left">CONSULTANT</td>
 						</tr>
 						<tr class="table-primary">
 							<td class="text-left col-md-2">
@@ -42,26 +52,10 @@
 						</tr>
 						<tr class="table-primary">
 							<td class="text-left">
-								ADRESSE
-							</td>
-							<td class="text-left">{{ user.address }}</td>
-						</tr>
-						<tr class="table-primary">
-							<td class="text-left">
 								DATE DE CREATION
 							</td>
 							<td class="text-left">{{ user.createdAt|date('d/m/Y')}}</td>
 						</tr>
-						{% if user.idConsultantValidate != null %}
-							<tr class="table-primary">
-								<td class="text-left">
-									VALIDER PAR
-								</td>
-								<td class="text-left">
-									<a href="{{ path('admin.viewConsultantRecruteur', {'id': user.idConsultantValidate,'idUser': user.id}) }}" class="btn btn-success">Voir</a>
-								</td>
-							</tr>
-						{% endif %}
 					</tbody>
 				</table>
 			{% else %}
@@ -71,8 +65,13 @@
 			{% endif %}
 		</div>
 		<div class="container text-center">
-			<a href="{{path('admin.recruteurListe')}}" class="btn btn-secondary">Retour</a>
-			<a href="{{path('admin.recruteurDelete',{'id': user.id})}}" class="btn btn-danger">Supprimer</a>
+			<a href="{{path('admin.recruteurDetail',{'id': userBis.id})}}" class="btn btn-secondary">Retour</a>
+			<a href="{{path('admin.consultantDelete',{'id': user.id})}}" class="btn btn-danger">Supprimer</a>
+			{% if user.isValid == 0 %}
+				<a href="{{path('admin.consultantActivate',{'id': user.id})}}" class="btn btn-info">Activer</a>
+			{% else %}
+				<a href="{{path('admin.consultantDesactivate',{'id': user.id})}}" class="btn btn-warning">Désactiver</a>
+			{% endif %}
 		</div>
 	{% else  %}
 		<div class="container">

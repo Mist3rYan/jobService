@@ -60,7 +60,7 @@
 			<div class="container text-center">
 				<a href="{{path('consultant.listeAd')}}" class="btn btn-secondary">Retour</a>
 				{% if annonce.getIsValid == 0 %}
-					<a href="{{path('consultant.validAd',{'id': annonce.id})}}" class="btn btn-success">Valider</a>
+					<a href="{{path('consultant.validAd',{'id': annonce.id,'idConsultant':app.user.id})}}" class="btn btn-success">Valider</a>
 				{% endif %}
 			</div>
 		{% else %}

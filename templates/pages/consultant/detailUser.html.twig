@@ -85,7 +85,7 @@
 			{% if app.user.roles[0] == 'ROLE_CONSULTANT' %}
 				<a href="{{path('consultant.listeUser')}}" class="btn btn-secondary">Retour</a>
 				{% if user.IsValid == 0 %}
-					<a href="{{path('consultant.validUser',{'id': user.id})}}"class="btn btn-success">Valider</a>
+					<a href="{{path('consultant.validUser',{'id': user.id,'idConsultant':app.user.id})}}" class="btn btn-success">Valider</a>
 				{% endif %}
 			{% endif %}
 		</div>
