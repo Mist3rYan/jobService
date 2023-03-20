@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Liste recruteurs
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		{% set affichage = false %}
+		{% if users|length > 0 %}
+			<h1>Liste des recruteurs</h1>
+			{% for message in app.flashes('danger')%}
+				<div class="alert alert-danger mt-4">
+					{{ message }}
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('success')%}
+				<div class="alert alert-success mt-4">
+					{{ message }}
+				</div>
+			{% endfor %}
+			{# total items count #}
+			<div class="row mt-4 d-flex align-items-center">
+				<div class="col-10">
+					<div class="p-3 bg-primary text-white">
+						<strong>Nombre de recruteurs:
+							{{ users.getTotalItemCount }}</strong>
+					</div>
+				</div>
+				<div class="col-2">
+					<a href="{{ path('admin.index') }}" class="btn btn-secondary btn-lg w-100">Retour</a>
+				</div>
+			</div>
+
+
+			<table class="table table-hover ">
+				<thead>
+					<tr>
+						{# <th scope="col" class="text-center">Numéro</th> #}
+						<th scope="col" class="text-center">Email</th>
+						<th scope="col" class="text-center">Date d'inscription</th>
+						<th scope="col" class="text-center">Valider</th>
+						<th scope="col" class="text-center">Détails</th>
+
+					</tr>
+				</thead>
+				<tbody>
+					{% for user in users %}
+						<tr class="table-primary">
+							<td class="text-center align-middle">{{ user.email }}</td>
+							<td class="text-center align-middle">{{ user.createdAt|date('d/m/Y')}}</td>
+							{% if user.isValid %}
+								<td class="text-center align-middle">Oui</td>
+							{% else %}
+								<td class="text-center align-middle">Non</td>
+							{% endif %}
+							<td class="text-center align-middle">
+								<a href="{{ path('admin.recruteurDetail', {'id': user.id}) }}" class="btn btn-success btn-lg w-100">Voir</a>
+							</td>
+						</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{# display navigation #}
+		<div class="navigation d-flex justify-content-center">
+			{{ knp_pagination_render(users) }}
+		</div>
+	{% else %}
+		<div class="alert alert-dismissible alert-danger">
+			<strong>Aucun ustilisateur trouvé</strong>
+		</div>
+	{% endif %}
+</div>{% endblock %}

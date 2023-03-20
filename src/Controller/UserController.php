@@ -54,7 +54,7 @@ class UserController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    #[Route('/admin/suppression/{id}', name: 'admin.candidatDelete', methods: ['GET', 'POST'])]
+    #[Route('/admin/suppressioncandidat/{id}', name: 'admin.candidatDelete', methods: ['GET', 'POST'])]
     public function candidatDeleteAdmin(User $user, ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
@@ -85,6 +85,42 @@ class UserController extends AbstractController
             6 /*limit per page*/
         );
         return $this->render('pages/admin/listeCandidat.html.twig', [
+            'users' => $users,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/suppressionrecruteur/{id}', name: 'admin.recruteurDelete', methods: ['GET', 'POST'])]
+    public function recruteurDeleteAdmin(User $user, ManagerRegistry $doctrine): Response
+    {
+        $entityManager = $doctrine->getManager();
+        $entityManager->remove($user);
+        $entityManager->flush();
+        $this->addFlash('danger', 'Le recruteur à bien été supprimé !');
+        return $this->redirectToRoute('admin.recruteurListe');
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/recruteur/{id}', name: 'admin.recruteurDetail', methods: ['GET', 'POST'])]
+    public function recruteurDetailAdmin(User $user): Response
+    {
+        return $this->render('pages/admin/detailRecruteur.html.twig', [
+            'user' => $user,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/recruteur', name: 'admin.recruteurListe', methods: ['GET', 'POST'])]
+    public function recruteurListeAdmin(UserRepository $repositery, PaginatorInterface $paginator, Request $request): Response
+    {
+        $users = $paginator->paginate(
+            $repositery->findBy([
+                'roles' => ['["ROLE_RECRUTEUR"]'],
+            ]),/* query NOT result */
+            $request->query->getInt('page', 1), /*page number*/
+            6 /*limit per page*/
+        );
+        return $this->render('pages/admin/listeRecruteur.html.twig', [
             'users' => $users,
         ]);
     }

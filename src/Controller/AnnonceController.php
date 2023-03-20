@@ -34,10 +34,12 @@ class AnnonceController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/detail/{id}', name: 'admin.detailAd', methods: ['GET', 'POST'])]
-    public function adDetailAdmin(Annonce $annonce): Response
+    public function adDetailAdmin(Annonce $annonce, ManagerRegistry $doctrine): Response
     {
+        $nomRecuteur = $annonce->getRecruteur()->getEmail();
         return $this->render('pages/admin/detailAd.html.twig', [
             'annonce' => $annonce,
+            'nomRecuteur' => $nomRecuteur,
         ]);
     }
 
@@ -89,8 +91,10 @@ class AnnonceController extends AbstractController
     #[Route('/consultant/detail/{id}', name: 'consultant.detailAd', methods: ['GET', 'POST'])]
     public function detailAd(Annonce $annonce): Response
     {
+        $nomRecuteur = $annonce->getRecruteur()->getEmail();
         return $this->render('pages/consultant/detailAd.html.twig', [
             'annonce' => $annonce,
+            'nomRecuteur' => $nomRecuteur,
         ]);
     }
 
