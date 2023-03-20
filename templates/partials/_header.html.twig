@@ -37,6 +37,15 @@
 				{% endif %}
 			</ul>
 			{% if app.user %}
+				{% if app.user.name != null and app.user.roles[0] != 'ROLE_CANDIDAT' %}
+					<span class="text-white mx-5">Bonjour
+						{{ app.user.name }}
+						.</span>
+				{% elseif app.user.firstName != null%}
+					<span class="text-white mx-5">Bonjour
+						{{ app.user.firstName }}
+						.</span>
+				{% endif %}
 				<a href="{{path('security.logout')}}" class="btn btn-warning">Se deconnecter</a>
 			{% else %}
 				<a href="{{path('security.login')}}" class="btn btn-success mx-2">Se connecter</a>

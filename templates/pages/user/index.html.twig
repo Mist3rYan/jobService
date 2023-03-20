@@ -80,5 +80,8 @@
 		{% if app.user.roles[0] == 'ROLE_CONSULTANT' %}
 			<a href="{{path('user.edit', {id: user.id})}}" class="btn btn-warning">Modifier</a>
 		{% endif %}
+		{% if app.user.roles[0] == 'ROLE_ADMIN' %}
+			<a href="{{path('admin.edit', {id: user.id})}}" class="btn btn-warning">Modifier</a>
+		{% endif %}
 	</div>
 {% endblock %}

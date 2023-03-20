@@ -16,27 +16,30 @@
 				{{ message }}
 			</div>
 		{% endfor %}
-				<a href="{{ path('user.index') }}" class="btn btn-secondary w-100 mt-4">Retour</a>
-			{{ form_start(form) }}
-			{{ form_errors(form) }}
-			{{ form_row(form.name) }}
-			{% if is_granted('ROLE_RECRUTEUR')%}
-				{{ form_widget(form.firstName, {"attr": {"class": "d-none"}}) }}
-				{{ form_widget(form.cv, {"attr": {"class": "d-none"}}) }}
-				{{ form_row(form.address)}}
-			{% endif %}
-			{% if is_granted('ROLE_CANDIDAT') %}
-				{{ form_row(form.firstName)}}
-				{{ form_row(form.cv)}}
-				{{ form_widget(form.address, {"attr": {"class": "d-none"}})}}
-			{% endif %}
-			{% if is_granted('ROLE_CONSULTANT') %}
-				{{ form_widget(form.firstName, {"attr": {"class": "d-none"}}) }}
-				{{ form_widget(form.cv, {"attr": {"class": "d-none"}}) }}
-				{{ form_widget(form.address, {"attr": {"class": "d-none"}})}}
-			{% endif %}
-			{{ form_row(form.plainPassword) }}
-			{{ form_row(form.submit) }}
-			{{ form_end(form) }}
+		<a href="{{ path('user.index') }}" class="btn btn-secondary w-100 mt-4">Retour</a>
+		{{ form_start(form) }}
+		{{ form_errors(form) }}
+		{{ form_row(form.name) }}
+		{% if is_granted('ROLE_RECRUTEUR')%}
+			{{ form_widget(form.email, {"attr": {"class": "d-none"}}) }}
+			{{ form_widget(form.firstName, {"attr": {"class": "d-none"}}) }}
+			{{ form_widget(form.cv, {"attr": {"class": "d-none"}}) }}
+			{{ form_row(form.address)}}
+		{% endif %}
+		{% if is_granted('ROLE_CANDIDAT') %}
+			{{ form_widget(form.email, {"attr": {"class": "d-none"}}) }}
+			{{ form_row(form.firstName)}}
+			{{ form_row(form.cv)}}
+			{{ form_widget(form.address, {"attr": {"class": "d-none"}})}}
+		{% endif %}
+		{% if is_granted('ROLE_CONSULTANT') %}
+			{{ form_widget(form.email, {"attr": {"class": "d-none"}}) }}
+			{{ form_widget(form.firstName, {"attr": {"class": "d-none"}}) }}
+			{{ form_widget(form.cv, {"attr": {"class": "d-none"}}) }}
+			{{ form_widget(form.address, {"attr": {"class": "d-none"}})}}
+		{% endif %}
+		{{ form_row(form.plainPassword) }}
+		{{ form_row(form.submit, {"attr": {"class": "btn btn-warning mt-4"}}) }}
+		{{ form_end(form) }}
 	</div>
 {% endblock %}

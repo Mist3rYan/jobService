@@ -16,10 +16,43 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class UserController extends AbstractController
 {
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/edition/{id}', name: 'admin.edit', methods: ['GET', 'POST'])]
+    public function editAdmin(User $user, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
+    {
+        if (!$this->getUser()) {
+            $this->addFlash('danger', 'Merci de vous connecter !');
+            return $this->redirectToRoute('security.login');
+        }
+        if ($this->getUser() !== $user) {
+            $this->addFlash('danger', 'Ce compte ne vous appartient pas !');
+            return $this->redirectToRoute('app_home');
+        }
+        $form = $this->createForm(UserType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($hasher->isPasswordValid($user, $user->getPlainPassword())) {
+                $user = $form->getData();
+
+                $manager->persist($user);
+                $manager->flush();
+
+                $this->addFlash('success', 'Votre compte a bien été modifié !');
+                return $this->redirectToRoute('user.index');
+            } else {
+                $this->addFlash('danger', 'Votre mot de passe est incorrect !');
+            }
+        }
+        return $this->render('pages/admin/editAdmin.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/admin/suppression/{id}', name: 'admin.candidatDelete', methods: ['GET', 'POST'])]
     public function candidatDeleteAdmin(User $user, ManagerRegistry $doctrine): Response
