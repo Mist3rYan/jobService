@@ -24,29 +24,56 @@
 				<table class="table table-striped ">
 					<tbody>
 						<tr class="table-primary">
-							<td class="text-left col-md-2">
+							<td class="text-left col-2">
 								POSTE
 							</td>
-							<td class="text-left">{{ annonce.poste }}</td>
+							<td class="text-left col-8">{{ annonce.poste }}</td>
+							<td class="col-2"></td>
 						</tr>
 						<tr class="table-primary">
 							<td class="text-left">
 								ADRESSE
 							</td>
 							<td class="text-left">{{ annonce.lieudetravail }}</td>
+							<td class="col-2"></td>
 						</tr>
 						<tr class="table-primary">
 							<td class="text-left">
 								DESCRIPTION
 							</td>
 							<td class="text-left">{{ annonce.description }}</td>
+							<td class="col-2"></td>
 						</tr>
 						<tr class="table-primary">
 							<td class="text-left">
 								DATE DE PUBLICATION
 							</td>
 							<td class="text-left">{{ annonce.createAt|date('d/m/Y')}}</td>
+							<td class="col-2"></td>
 						</tr>
+						{% if app.user.roles[0] == 'ROLE_RECRUTEUR' %}
+							{% for candidat in annonce.getIdCandidatValid %}
+								<tr class="table-primary">
+									<td class="text-left">
+										CANDIDAT
+									</td>
+									<td class="text-left">
+										{% for user in users %}
+											{% if user.id == candidat %}
+												{{ user.email}}
+											</td>
+											<td class="text-center col-2">
+												{% if user.cv != null %}
+													<a class="text-right" href="{{ '/uploads/' ~ user.cv }}">Télécharger le CV</a>
+												{% else %}
+													Aucun CV
+												{% endif %}
+											{% endif %}
+										{% endfor %}
+									</td>
+								</tr>
+							{% endfor %}
+						{% endif %}
 					</tbody>
 				</table>
 			{% else %}
