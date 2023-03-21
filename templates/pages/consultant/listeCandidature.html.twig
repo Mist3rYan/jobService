@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Les candidatures
+{% endblock %}
+
+{% block body %}
+	{% if app.user.isValid != 0 %}
+		<div class="container mt-4">
+			{% if annonces|length > 0 %}
+				{% set i = 0 %}
+				{% for annonce in annonces %}
+					{% for candidat in annonce.id_candidat_attente %}
+						{% set i = i + 1 %}
+					{% endfor %}
+				{% endfor %}
+				<h1>Les candidatures à valider</h1>
+				{% for message in app.flashes('danger')%}
+					<div class="alert alert-danger mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				{% for message in app.flashes('success')%}
+					<div class="alert alert-success mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
+				{# total items count #}
+				<div class="row mt-4 d-flex align-items-center">
+					<div class="col-10">
+						<div class="p-3 bg-primary text-white">
+							<strong>Nombre de candidature à valider : {{ i }}
+							</strong>
+						</div>
+					</div>
+					<div class="col-2">
+						<a href="{{ path('consultant.board') }}" class="btn btn-secondary btn-lg w-100">Retour</a>
+					</div>
+				</div>
+
+
+				<table class="table table-hover ">
+					<thead>
+						<tr>
+							{# <th scope="col" class="text-center">Numéro</th> #}
+							<th scope="col" class="col-3 text-center">Annonce</th>
+							<th scope="col" class="col-3 text-center">Candidat</th>
+							<th scope="col" class="col-3 text-center">Refuser</th>
+							<th scope="col" class="col-3 text-center">Accepter</th>
+
+						</tr>
+					</thead>
+					<tbody>
+						{% for annonce in annonces %}
+							{% for candidat in annonce.id_candidat_attente %}
+								<tr
+									class="table-primary">
+									{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
+									<td class="text-center align-middle">
+										<a href="{{ path('consultant.detailAdCand', {'id': annonce.id}) }}" class="btn btn-warning btn-lg w-100">Voir l'annonce</a>
+									</td>
+									<td class="text-center align-middle">
+										<a href="{{ path('consultant.detailUserCan', {'id': candidat}) }}" class="btn btn-info btn-lg w-100">Voir le candidat</a>
+									</td>
+									<td class="text-center align-middle">
+										<a href="{{ path('user.candidatDenied',{'id':annonce.id, 'idCandidat':candidat})}}" class="btn btn-danger btn-lg w-100">Refuser</a>
+									</td>
+									<td class="text-center align-middle">
+										<a href="{{ path('user.candidatAccept',{'id':annonce.id, 'idCandidat':candidat})}}" class="btn btn-success btn-lg w-100">Accepter</a>
+									</td>
+								</tr>
+							{% endfor %}
+						{% endfor %}
+					</tbody>
+				</table>
+			{% else %}
+				<div class="alert alert-dismissible alert-danger">
+					<strong>Aucune offre trouvée</strong>
+				</div>
+			{% endif %}
+		</div>
+	{% else  %}
+		<div class="container mt-4">
+			<div class="alert alert-danger mt-4">
+				Vote compte est désactivé.
+			</div>
+		</div>
+	{% endif %}
+{% endblock %}

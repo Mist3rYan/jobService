@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
-
+use App\Entity\Annonce;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\AnnonceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,13 +21,33 @@ class UserController extends AbstractController
 
     #[IsGranted('ROLE_USER')]
     #[Route('/utilisateur/moncompte', name: 'user.index', methods: ['GET', 'POST'])]
-    public function index(): Response
+    public function index(AnnonceRepository $repositery): Response
     {
+        $annonceValides = $repositery->findBy(["id_candidat_valid" => $this->getUser()]);
+        $annonceInvalides = $repositery->findBy(["id_candidat_invalid" => $this->getUser()]);
+        $annonceEnAttentes = $repositery->findBy(["id_candidat_attente" => $this->getUser()]);
         if (!$this->getUser()) {
             return $this->redirectToRoute('security.login');
         }
         return $this->render('pages/user/index.html.twig', [
             'user' => $this->getUser(),
+            'annonceValides' => $annonceValides,
+            'annonceInvalides' => $annonceInvalides,
+            'annonceEnAttentes' => $annonceEnAttentes,
+        ]);
+    }
+
+    #[IsGranted('ROLE_USER')]
+    #[Route('/utilisateur/moncomptecandidat', name: 'user.boardCandidat', methods: ['GET', 'POST'])]
+    public function boardCandidat(AnnonceRepository $repositery): Response
+    {
+        $annonces = $repositery->findAll();
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('security.login');
+        }
+        return $this->render('pages/user/boardCandidat.hmtl.twig', [
+            'user' => $this->getUser(),
+            'annonces' => $annonces,
         ]);
     }
 
@@ -88,5 +109,50 @@ class UserController extends AbstractController
         $this->addFlash('danger', 'Votre compte à bien été supprimé !');
         return $this->redirectToRoute('app_home');
     }
-    
+
+    //Decandidature
+    #[IsGranted('ROLE_CANDIDAT')]
+    #[Route('/utilisateur/annulationcandidature/{id}/{idCandidat}', name: 'user.decandidater', methods: ['GET', 'POST'])]
+    public function decandidater(Annonce $annonce, $idCandidat, EntityManagerInterface $manager): Response
+    {
+        $tab = $annonce->getIdCandidatInvalid();
+        $tab = array_filter($tab,function($valeur) use ($idCandidat) {
+            return $valeur != $idCandidat;
+        });
+        $annonce->setIdCandidatInvalid($tab);
+
+        $tab = $annonce->getIdCandidatValid();
+        $tab = array_filter($tab,function($valeur) use ($idCandidat) {
+            return $valeur != $idCandidat;
+        });
+        $annonce->setIdCandidatValid($tab);
+
+        $tab = $annonce->getId_candidat_attente();
+        $tab = array_filter($tab,function($valeur) use ($idCandidat) {
+            return $valeur != $idCandidat;
+        });
+        $annonce->setId_candidat_attente($tab);
+        $manager->persist($annonce);
+        $manager->flush();
+        $this->addFlash('success', "Votre candidature à bien été retirée !");
+        return $this->redirectToRoute('user.boardCandidat');
+    }
+
+    //Candidature
+    #[IsGranted('ROLE_CANDIDAT')]
+    #[Route('/utilisateur/candidature/{id}/{idCandidat}', name: 'user.candidater', methods: ['GET', 'POST'])]
+    public function candidater(Annonce $annonce, $idCandidat, EntityManagerInterface $manager): Response
+    {
+        $tab = $annonce->getId_candidat_attente();
+        $occurrences = array_count_values($tab);
+        if (!isset($occurrences[$idCandidat]) || $occurrences[$idCandidat] < 1) {
+            array_push($tab, $idCandidat);
+        }
+        $annonce->setId_candidat_attente($tab);
+        $manager->persist($annonce);
+        $manager->flush();
+        $this->addFlash('success', "Votre candidature à bien été enregistrée ! Un consultant doit la valider.");
+        return $this->redirectToRoute('user.boardCandidat');
+    }
+
 }

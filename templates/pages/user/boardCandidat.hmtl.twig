@@ -1,0 +1,192 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Mon compte
+{% endblock %}
+
+{% block body %}
+	<div class="container mt-4">
+		<h1>Mon compte</h1>
+		{% for message in app.flashes('danger')%}
+			<div class="alert alert-danger mt-4">
+				{{ message }}
+			</div>
+		{% endfor %}
+		{% for message in app.flashes('success')%}
+			<div class="alert alert-success mt-4">
+				{{ message }}
+			</div>
+		{% endfor %}
+		<table class="table table-striped ">
+			<tbody>
+				<tr class="table-primary">
+					<td class="text-left col-md-2">
+						EMAIL
+					</td>
+					<td class="text-left">{{ user.email }}</td>
+				</tr>
+				<tr class="table-primary">
+					<td class="text-left">
+						NOM
+					</td>
+					<td class="text-left">{{ user.name }}</td>
+				</tr>
+				{% if app.user.roles[0] == 'ROLE_CANDIDAT' %}
+					<tr class="table-primary">
+						<td class="text-left">
+							PRENOM
+						</td>
+						<td class="text-left">{{ user.firstname }}</td>
+					</tr>
+
+					<tr class="table-primary">
+						<td class="text-left">
+							MON CV
+						</td>
+						<td class="text-left">
+							{% if user.cv != null %}
+								<a href="{{ '/uploads/' ~ user.cv }}">Télécharger</a>
+							{% else %}
+								Aucun
+							{% endif %}
+						</td>
+					</tr>
+				{% endif %}
+				{% if app.user.roles[0] == 'ROLE_RECRUTEUR' %}
+					<tr class="table-primary">
+						<td class="text-left">
+							ADRESSE
+						</td>
+						<td class="text-left">{{ user.address }}</td>
+					</tr>
+				{% endif %}
+				<tr class="table-primary">
+					<td class="text-left">
+						DATE DE CREATION
+					</td>
+					<td class="text-left">{{ user.createdAt|date('d/m/Y')}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="container text-center">
+			<a href="{{path('user.delete', {id: user.id})}}" class="btn btn-danger">Supprimer</a>
+			<a href="{{path('user.edit', {id: user.id})}}" class="btn btn-warning">Modifier</a>
+		</div>
+		<h3 class="mt-4">Candidature acceptée</h3>
+		<table class="table table-hover mt-4">
+			<thead>
+				<tr>
+					{# <th scope="col" class="text-center">Numéro</th> #}
+					<th scope="col" class="text-center">Poste</th>
+					<th scope="col" class="text-center">Lieu</th>
+					<th scope="col" class="text-center">Description</th>
+					<th scope="col" class="text-center">Date</th>
+					<th scope="col" class="col-1 text-center">Détails</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% set buffer = 0 %}
+				{% for annonce in annonces %}
+					{% if user.id in annonce.idCandidatValid %}
+						{% set buffer = 1 %}
+						<tr
+							class="table-primary">
+							{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
+							<td class="text-center align-middle">{{ annonce.poste }}</td>
+							<td class="text-center align-middle">{{ annonce.lieudetravail }}</td>
+							<td class="text-center align-middle">{{ annonce.description }}</td>
+							<td class="text-center align-middle">{{ annonce.createAt|date('d/m/Y')}}</td>
+							<td class="text-center align-middle">
+								<a href="{{ path('user.decandidater',{'id': annonce.id,'idCandidat':app.user.id}) }}" class="btn btn-danger btn-lg w-100">Annuler ma candidature</a>
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+				{% if buffer == 0 %}
+					<tr class="table-primary">
+						<td colspan="5" class="text-center align-middle">
+							Aucune offre trouvée</td>
+					</tr>
+				{% endif %}
+			</tbody>
+		</table>
+		<h3 class="mt-4">Candidature en attente</h3>
+		{# display navigation #}
+		<table class="table table-hover mt-4">
+			<thead>
+				<tr>
+					{# <th scope="col" class="text-center">Numéro</th> #}
+					<th scope="col" class="text-center">Poste</th>
+					<th scope="col" class="text-center">Lieu</th>
+					<th scope="col" class="text-center">Description</th>
+					<th scope="col" class="text-center">Date</th>
+					<th scope="col" class="col-1 text-center">Détails</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% set buffer = 0 %}
+				{% for annonce in annonces %}
+					{% if user.id in annonce.id_candidat_attente %}
+						{% set buffer = 1 %}
+						<tr
+							class="table-primary">
+							{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
+							<td class="text-center align-middle">{{ annonce.poste }}</td>
+							<td class="text-center align-middle">{{ annonce.lieudetravail }}</td>
+							<td class="text-center align-middle">{{ annonce.description }}</td>
+							<td class="text-center align-middle">{{ annonce.createAt|date('d/m/Y')}}</td>
+							<td class="text-center align-middle">
+								<a href="{{ path('user.decandidater',{'id': annonce.id,'idCandidat':app.user.id}) }}" class="btn btn-danger btn-lg w-100">Annuler ma candidature</a>
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+				{% if buffer == 0 %}
+					<tr class="table-primary">
+						<td colspan="5" class="text-center align-middle">
+							Aucune offre trouvée</td>
+					</tr>
+				{% endif %}
+			</tbody>
+		</table>
+		<h3 class="mt-4">Candidature refusée</h3>
+		{# display navigation #}
+		<table class="table table-hover mt-4">
+			<thead>
+				<tr>
+					{# <th scope="col" class="text-center">Numéro</th> #}
+					<th scope="col" class="text-center">Poste</th>
+					<th scope="col" class="text-center">Lieu</th>
+					<th scope="col" class="text-center">Description</th>
+					<th scope="col" class="text-center">Date</th>
+					<th scope="col" class="col-1 text-center">Détails</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% set buffer = 0 %}
+				{% for annonce in annonces %}
+					{% if user.id in annonce.idCandidatInvalid %}
+						{% set buffer = 1 %}
+						<tr
+							class="table-primary">
+							{# <th scope="row" class="text-center">{{ loop.index }}</th> #}
+							<td class="text-center align-middle">{{ annonce.poste }}</td>
+							<td class="text-center align-middle">{{ annonce.lieudetravail }}</td>
+							<td class="text-center align-middle">{{ annonce.description }}</td>
+							<td class="text-center align-middle">{{ annonce.createAt|date('d/m/Y')}}</td>
+							<td class="text-center align-middle">
+								<a href="{{ path('user.decandidater',{'id': annonce.id,'idCandidat':app.user.id}) }}" class="btn btn-danger btn-lg w-100">Annuler ma candidature</a>
+							</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+				{% if buffer == 0 %}
+					<tr class="table-primary">
+						<td colspan="5" class="text-center align-middle">
+							Aucune offre trouvée</td>
+					</tr>
+				{% endif %}
+			</tbody>
+		</table>
+	</div>
+{% endblock %}

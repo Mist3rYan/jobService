@@ -5,9 +5,11 @@ namespace App\Controller;
 use App\Entity\Annonce;
 use App\Form\AnnonceType;
 use App\Repository\AnnonceRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
+use SebastianBergmann\CodeCoverage\Report\Xml\Report;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,7 +34,18 @@ class AnnonceController extends AbstractController
     
     #[IsGranted('ROLE_USER')]
     #[Route('/annonce/offre/{id}', name: 'annonce.detail', methods: ['GET', 'POST'])]
-    public function detail(Annonce $annonce): Response
+    public function detail(Annonce $annonce,UserRepository $repositery): Response
+    {
+        $users = $repositery->findAll();
+        return $this->render('pages/annonce/detail.html.twig', [
+            'annonce' => $annonce,
+            'users' => $users,
+        ]);
+    }
+
+    #[IsGranted('ROLE_CANDIDAT')]
+    #[Route('/annonce/offre/candidater/{id}', name: 'annonce.detailCandidat', methods: ['GET', 'POST'])]
+    public function detailCandidat(Annonce $annonce): Response
     {
         return $this->render('pages/annonce/detail.html.twig', [
             'annonce' => $annonce,

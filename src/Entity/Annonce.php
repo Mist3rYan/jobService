@@ -105,7 +105,7 @@ class Annonce
     }
     public function getIdCandidatValid(): array
     {
-        return$this->id_candidat_valid;
+        return $this->id_candidat_valid;
     }
 
     public function setIdCandidatValid(array $id_candidat_valid): self
@@ -120,7 +120,7 @@ class Annonce
         return $this->id_candidat_invalid;
     }
 
-    public function setIdCandidatInvalid(?string $id_candidat_invalid): self
+    public function setIdCandidatInvalid(array $id_candidat_invalid): self
     {
         $this->id_candidat_invalid = $id_candidat_invalid;
 
