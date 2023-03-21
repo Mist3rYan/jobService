@@ -26,12 +26,14 @@ class Annonce
     #[ORM\Column]
     private ?\DateTimeImmutable $createAt = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $id_candidat_valid = null;
+    #[ORM\Column(nullable: true)]
+    private array $id_candidat_valid = [];
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $id_candidat_invalid = null;
+    #[ORM\Column(nullable: true)]
+    private array $id_candidat_invalid = [];
 
+    #[ORM\Column(nullable: true)]
+    private array $id_candidat_attente = [];
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $id_validaton_consultant = null;
@@ -101,20 +103,19 @@ class Annonce
 
         return $this;
     }
-
-    public function getIdCandidatValid(): ?string
+    public function getIdCandidatValid(): array
     {
-        return $this->id_candidat_valid;
+        return$this->id_candidat_valid;
     }
 
-    public function setIdCandidatValid(?string $id_candidat_valid): self
+    public function setIdCandidatValid(array $id_candidat_valid): self
     {
         $this->id_candidat_valid = $id_candidat_valid;
 
         return $this;
     }
 
-    public function getIdCandidatInvalid(): ?string
+    public function getIdCandidatInvalid(): array
     {
         return $this->id_candidat_invalid;
     }
@@ -122,6 +123,18 @@ class Annonce
     public function setIdCandidatInvalid(?string $id_candidat_invalid): self
     {
         $this->id_candidat_invalid = $id_candidat_invalid;
+
+        return $this;
+    }
+
+    public function getId_candidat_attente(): array
+    {
+        return $this->id_candidat_attente;
+    }
+
+    public function setId_candidat_attente($id_candidat_attente): self
+    {
+        $this->id_candidat_attente = $id_candidat_attente;
 
         return $this;
     }

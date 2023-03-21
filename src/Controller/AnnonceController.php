@@ -16,88 +16,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AnnonceController extends AbstractController
 {
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/admin/annonce/delete/{id}', name: 'annonce.deleteAdmin', methods: ['GET'])]
-    public function deleteAdmin(Annonce $annonce, ManagerRegistry $doctrine): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY'); // on verifie que l'utilisateur est connecté
-        $em = $doctrine->getManager();
-        $em->remove($annonce); // on supprime l'objet $post
-        $em->flush();
-        $this->addFlash(
-            'danger',
-            "L' annonce a été supprimée !"
-         );
-        //redirection vers la page d'accueil
-        return $this->redirectToRoute('admin.listeAd');
-    }
-
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/admin/detail/{id}', name: 'admin.detailAd', methods: ['GET', 'POST'])]
-    public function adDetailAdmin(Annonce $annonce): Response
-    {
-        $nomRecuteur = $annonce->getRecruteur()->getEmail();
-        return $this->render('pages/admin/detailAd.html.twig', [
-            'annonce' => $annonce,
-            'nomRecuteur' => $nomRecuteur,
-        ]);
-    }
-
-    #[IsGranted('ROLE_ADMIN')]
-    #[Route('/admin/annonce', name: 'admin.listeAd', methods: ['GET', 'POST'])]
-    public function adListeAdmin(AnnonceRepository $repositery, PaginatorInterface $paginator, Request $request): Response
-    {
-        $annonces = $paginator->paginate(
-            $repositery->findAll(), /* query NOT result */
-            $request->query->getInt('page',1), /*page number*/
-            6 /*limit per page*/
-        );
-        return $this->render('pages/admin/listeAd.html.twig', [
-            'annonces' => $annonces,
-        ]);
-    }
-
-    #[IsGranted('ROLE_CONSULTANT')]
-    #[Route('/consultant/annoncevalider/{id}/{idConsultant}', name: 'consultant.validAd', methods: ['GET','POST'])]
-    public function validAd(Annonce $annonce, $idConsultant, EntityManagerInterface $manager): Response
-    {
-        if($annonce->getIsValid() == 0){
-            $annonce->setIsValid(1);
-            $annonce->setIdValidatonConsultant($idConsultant);
-            $manager->persist($annonce);
-            $manager->flush();
-            $this->addFlash('success', "L'annonce a bien été validée !");
-            return $this->redirectToRoute('consultant.listeAd');
-        }
-        return $this->render('pages/consultant/detailAd.html.twig', [
-            'annonce' => $annonce,
-        ]);
-    }
-
-    #[IsGranted('ROLE_CONSULTANT')]
-    #[Route('/consultant/annonce', name: 'consultant.listeAd', methods: ['GET', 'POST'])]
-    public function listeAd(AnnonceRepository $repositery, PaginatorInterface $paginator, Request $request): Response
-    {
-        $annonces = $paginator->paginate(
-            $repositery->findBy(["isValid" => "0"]), /* query NOT result */
-            $request->query->getInt('page',1), /*page number*/
-            6 /*limit per page*/
-        );
-        return $this->render('pages/consultant/listeAd.html.twig', [
-            'annonces' => $annonces,
-        ]);
-    }
-
-    #[IsGranted('ROLE_CONSULTANT')]
-    #[Route('/consultant/detail/{id}', name: 'consultant.detailAd', methods: ['GET', 'POST'])]
-    public function detailAd(Annonce $annonce): Response
-    {
-        $nomRecuteur = $annonce->getRecruteur()->getEmail();
-        return $this->render('pages/consultant/detailAd.html.twig', [
-            'annonce' => $annonce,
-            'nomRecuteur' => $nomRecuteur,
-        ]);
-    }
 
     #[Route('/offres', name: 'annonce.index', methods: ['GET'])]
     public function index(AnnonceRepository $repositery, PaginatorInterface $paginator, Request $request): Response
@@ -112,6 +30,7 @@ class AnnonceController extends AbstractController
         ]);
     }
     
+    #[IsGranted('ROLE_USER')]
     #[Route('/annonce/offre/{id}', name: 'annonce.detail', methods: ['GET', 'POST'])]
     public function detail(Annonce $annonce): Response
     {

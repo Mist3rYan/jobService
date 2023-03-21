@@ -270,7 +270,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $recruteur->setRecruteur(null);
             }
         }
-
         return $this;
     }
 }
