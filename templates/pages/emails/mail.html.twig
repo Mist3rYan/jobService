@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<title>Mail</title>
+	</head>
+	<body>
+		<div>
+			<h1>Une nouvelle candidature pour votre annonce référence :  {{ idAnnonce }}</h1>
+            <p>Un candidat a été retenu pour le poste de {{ poste }}.</p>
+			<p>L'adresse mail du candidat est:
+				{{ mail }}</p>
+			{% if cv != null %}
+			<p>Voici son CV :&nbsp;
+			<a href="{{ cv }}"> Télécharger le CV du candidat</p>
+			{% endif %}
+		</div>
+		<div>
+			<p>Bonne journée, TRT conseil.</p>
+		</div>
+	</body>
+</html>

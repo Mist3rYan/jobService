@@ -4,16 +4,19 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Annonce;
+use Symfony\Component\Asset\Package;
 use App\Repository\UserRepository;
 use App\Repository\AnnonceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Asset\VersionStrategy\EmptyVersionStrategy;
 
 class ConsultantController extends AbstractController
 {
@@ -185,7 +188,7 @@ class ConsultantController extends AbstractController
         //Candidature VALIDE
         #[IsGranted('ROLE_CONSULTANT')]
         #[Route('/consultant/candidatureaccepter/{id}/{idCandidat}', name: 'user.candidatAccept', methods: ['GET', 'POST'])]
-        public function candidatAccept(Annonce $annonce, $idCandidat, EntityManagerInterface $manager): Response
+        public function candidatAccept(Annonce $annonce, $idCandidat, EntityManagerInterface $manager, MailerInterface $mailer, UserRepository $user): Response
         {
             $tab = $annonce->getIdCandidatValid();
             $occurrences = array_count_values($tab);
@@ -202,6 +205,25 @@ class ConsultantController extends AbstractController
 
             $manager->persist($annonce);
             $manager->flush();
+            //Email
+            $candidat = $user->findOneBy(['id' => $idCandidat]);
+            $racine = $_SERVER['DOCUMENT_ROOT'];
+            $cv = $candidat->getCv();
+            $cv = $racine . '/uploads/'.$cv;
+
+            $email = (new TemplatedEmail())
+                ->from($annonce->getRecruteur()->getEmail()) //email de l'entreprise
+                ->to('candidature@trtconseil.fr') //email trt cosneil
+                ->subject('Candidature pour votre annonce')
+                ->htmlTemplate('pages/emails/mail.html.twig')
+                ->context([
+                    'idAnnonce' => $annonce->getId(),
+                    'poste' => $annonce->getPoste(),
+                    'mail' => $candidat->getEmail(),
+                    'cv' => $cv,
+                ]);
+            $mailer->send($email);
+
             $this->addFlash('success', "La candidature a bien été acceptée !");
             return $this->redirectToRoute('consultant.listeCandidature');
         }
