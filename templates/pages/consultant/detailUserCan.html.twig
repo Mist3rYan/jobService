@@ -56,7 +56,13 @@
 								<td class="text-left">
 									MON CV
 								</td>
-								<td class="text-left"><a href="{{ '/uploads/' ~ user.cv }}">Télécharger</a></td>
+								<td class="text-left">
+									{% if user.cv != null %}
+										<a href="{{ '/uploads/' ~ user.cv }}">Télécharger</a>
+									{% else %}
+										Aucun
+									{% endif %}
+								</td>
 							</tr>
 						{% endif %}
 						{% if user.roles[0] == 'ROLE_RECRUTEUR' %}
@@ -82,11 +88,11 @@
 			{% endif %}
 		</div>
 		<div class="container text-center">
-				<a href="{{path('consultant.listeCandidature')}}" class="btn btn-secondary">Retour</a>
+			<a href="{{path('consultant.listeCandidature')}}" class="btn btn-secondary">Retour</a>
 		</div>
 	{% else  %}
 		<div class="container mt-4">
-						<div class="alert alert-danger mt-4">
+			<div class="alert alert-danger mt-4">
 				Vote compte est désactivé.
 			</div>
 		</div>

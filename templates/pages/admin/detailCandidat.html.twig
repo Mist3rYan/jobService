@@ -56,7 +56,11 @@
 								MON CV
 							</td>
 							<td class="text-left">
-								<a href="{{ '/uploads/' ~ user.cv }}">Télécharger</a>
+								{% if user.cv != null %}
+									<a href="{{ '/uploads/' ~ user.cv }}">Télécharger</a>
+								{% else %}
+									Aucun
+								{% endif %}
 							</td>
 						</tr>
 						<tr class="table-primary">
