@@ -21,7 +21,7 @@ class AppFixtures extends Fixture
     {
         $recruteurs = [];
         //Recruteur 
-        for ($i = 0; $i < 6; $i++) {
+        for ($i = 0; $i < 1; $i++) {
             $recruteur = new User();
             $recruteur->setEmail($this->faker->email())
                 ->setRoles(['ROLE_RECRUTEUR'])
@@ -30,7 +30,7 @@ class AppFixtures extends Fixture
             $manager->persist($recruteur);
         }
         //Candidat
-        for ($i = 0; $i < 25; $i++) {
+        for ($i = 0; $i < 2; $i++) {
             $candidat = new User();
             $candidat->setEmail($this->faker->email())
                 ->setRoles(['ROLE_CANDIDAT'])
@@ -39,7 +39,7 @@ class AppFixtures extends Fixture
             $manager->persist($candidat);
         }
         //Consultant 
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 1; $i++) {
             $consultant = new User();
             $consultant->setEmail($this->faker->email())
                 ->setRoles(['ROLE_CONSULTANT'])
@@ -48,7 +48,7 @@ class AppFixtures extends Fixture
             $manager->persist($consultant);
         }
         //Annonce
-        for ($i = 0; $i < 25; $i++) {
+        for ($i = 0; $i < 2; $i++) {
             $annonce = new Annonce();
             $annonce->setPoste($this->faker->jobTitle())
                 ->setLieuDeTravail($this->faker->address())
