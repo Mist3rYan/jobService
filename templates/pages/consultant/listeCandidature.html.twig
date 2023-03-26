@@ -78,6 +78,11 @@
 					</tbody>
 				</table>
 			{% else %}
+				{% for message in app.flashes('success')%}
+					<div class="alert alert-success mt-4">
+						{{ message }}
+					</div>
+				{% endfor %}
 				<div class="alert alert-dismissible alert-danger">
 					<strong>Aucune offre trouvée</strong>
 				</div>

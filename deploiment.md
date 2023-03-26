@@ -116,3 +116,9 @@ heroku open
 Avec le comtpe admin vous avez accès a toutes les datas.
 
 Tout est prêt !!!
+
+ATTENTION POUR LES MAILS LORSQU'UNE CANDIDATURE EST VALIDEE LES MAILS SONT EN ATTENTES
+POUR LES ENVOYER
+```
+heroku run php bin/console messenger:consume
+```
