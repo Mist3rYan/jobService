@@ -17,6 +17,7 @@
 			</div>
 		{% endfor %}
 		<a href="{{ path('user.index') }}" class="btn btn-secondary w-100 mt-4">Retour</a>
+		<a href="{{ path('admin.editPassword',{'id': user.id}) }}" class="btn btn-info w-100 mt-4">Changer mot de passe</a>
 		{{ form_start(form) }}
 		{{ form_errors(form) }}
 		{{ form_row(form.email) }}

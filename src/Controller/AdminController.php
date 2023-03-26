@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserType;
 use App\Entity\Annonce;
 use App\Form\RegistrationType;
+use App\Form\UserPasswordType;
 use App\Repository\UserRepository;
 use App\Repository\AnnonceRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -50,6 +52,34 @@ class AdminController extends AbstractController
             }
         }
         return $this->render('pages/admin/editAdmin.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user,
+        ]);
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/admin/editionpassword/{id}', name: 'admin.editPassword', methods: ['GET', 'POST'])]
+    public function editPassword(User $user, Request $request, UserPasswordHasherInterface $hasher,EntityManagerInterface $manager ): Response
+    {
+        $form = $this->createForm(UserPasswordType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($hasher->isPasswordValid($user, $form->getData()['plainpassword'])) {
+                $user->setPassword(
+                    $hasher->hashPassword(
+                        $user,
+                        $form->getData()['newPassword']
+                    ));
+
+                $manager->persist($user);
+                $manager->flush();
+
+                $this->addFlash('success', 'Votre mot de passe a bien été modifié !');
+            } else {
+                $this->addFlash('danger', 'Votre mot de passe est incorrect !');
+            }
+        }
+        return $this->render('pages/admin/editPassword.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -311,7 +341,7 @@ class AdminController extends AbstractController
         $this->addFlash(
             'danger',
             "L' annonce a été supprimée !"
-         );
+        );
         //redirection vers la page d'accueil
         return $this->redirectToRoute('admin.listeAd');
     }
@@ -335,7 +365,7 @@ class AdminController extends AbstractController
     {
         $annonces = $paginator->paginate(
             $repositery->findAll(), /* query NOT result */
-            $request->query->getInt('page',1), /*page number*/
+            $request->query->getInt('page', 1), /*page number*/
             6 /*limit per page*/
         );
         return $this->render('pages/admin/listeAd.html.twig', [

@@ -19,6 +19,12 @@ class AppFixtures extends Fixture
     }
     public function load(ObjectManager $manager): void
     {
+        $admin = new User();
+        $admin->setEmail('admin@admin.fr')
+            ->setRoles(['ROLE_ADMIN'])
+            ->setPlainPassword('password');
+
+        $manager->persist($admin);
         $recruteurs = [];
         //Recruteur 
         for ($i = 0; $i < 1; $i++) {
@@ -56,12 +62,6 @@ class AppFixtures extends Fixture
                 ->setRecruteur($recruteurs[mt_rand(0, count($recruteurs) - 1)]);
             $manager->persist($annonce);
         }
-        $admin = new User();
-        $admin->setEmail('admin@admin.fr')
-            ->setRoles(['ROLE_ADMIN'])
-            ->setPlainPassword('password');
-
-        $manager->persist($admin);
         $manager->flush();
     }
 }
