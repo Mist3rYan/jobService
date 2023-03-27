@@ -20,19 +20,17 @@
 			{% endfor %}
 			{# total items count #}
 			<div class="row mt-4 d-flex align-items-center">
-				<div class="col-10">
-					<div class="p-3 bg-primary text-white">
+				<div>
+					<a href="{{ path('admin.index') }}" class="btn btn-secondary btn-lg w-100">Retour</a>
+				</div>
+				<div>
+					<div class="mt-4 p-3 bg-primary text-white">
 						<strong>Nombre d'annonces:
 							{{ annonces.getTotalItemCount }}</strong>
 					</div>
 				</div>
-				<div class="col-2">
-					<a href="{{ path('admin.index') }}" class="btn btn-secondary btn-lg w-100">Retour</a>
-				</div>
 			</div>
-
-
-			<table class="table table-hover ">
+			<table class="table table-hover table-striped">
 				<thead>
 					<tr>
 						{# <th scope="col" class="text-center">Numéro</th> #}

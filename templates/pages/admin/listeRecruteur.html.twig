@@ -21,19 +21,18 @@
 			{% endfor %}
 			{# total items count #}
 			<div class="row mt-4 d-flex align-items-center">
-				<div class="col-10">
-					<div class="p-3 bg-primary text-white">
+				<div>
+					<a href="{{ path('admin.index') }}" class="btn btn-secondary btn-lg w-100">Retour</a>
+				</div>
+				<div>
+					<div class=" mt-4 p-3 bg-primary text-white">
 						<strong>Nombre de recruteurs:
 							{{ users.getTotalItemCount }}</strong>
 					</div>
 				</div>
-				<div class="col-2">
-					<a href="{{ path('admin.index') }}" class="btn btn-secondary btn-lg w-100">Retour</a>
-				</div>
 			</div>
 
-
-			<table class="table table-hover ">
+			<table class="table table-hover table-striped">
 				<thead>
 					<tr>
 						{# <th scope="col" class="text-center">Numéro</th> #}
@@ -58,16 +57,17 @@
 								<a href="{{ path('admin.recruteurDetail', {'id': user.id}) }}" class="btn btn-success btn-lg w-100">Voir</a>
 							</td>
 						</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-		{# display navigation #}
-		<div class="navigation d-flex justify-content-center">
-			{{ knp_pagination_render(users) }}
-		</div>
-	{% else %}
-		<div class="alert alert-dismissible alert-danger">
-			<strong>Aucun ustilisateur trouvé</strong>
-		</div>
-	{% endif %}
-</div>{% endblock %}
+					{% endfor %}
+				</tbody>
+			</table>
+			{# display navigation #}
+			<div class="navigation d-flex justify-content-center">
+				{{ knp_pagination_render(users) }}
+			</div>
+		{% else %}
+			<div class="alert alert-dismissible alert-danger">
+				<strong>Aucun ustilisateur trouvé</strong>
+			</div>
+		{% endif %}
+	</div>
+{% endblock %}
